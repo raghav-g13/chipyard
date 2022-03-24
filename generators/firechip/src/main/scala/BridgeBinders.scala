@@ -32,6 +32,7 @@ import barstools.iocell.chisel._
 import chipyard.iobinders.{IOBinders, OverrideIOBinder, ComposeIOBinder, GetSystemParameters, IOCellKey}
 import chipyard.{HasHarnessSignalReferences}
 import chipyard.harness._
+import chipyard.example._
 
 object MainMemoryConsts {
   val regionNamePrefix = "MainMemory"
@@ -90,6 +91,32 @@ class WithNICBridge extends OverrideHarnessBinder({
   }
 })
 
+class WithAirSimBridge extends OverrideHarnessBinder({
+  (system: CanHavePeripheryAirSimIO, th: FireSim, ports: Seq[ClockedIO[AirSimPortIO]]) => {
+    val p: Parameters = GetSystemParameters(system)
+    println(s"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    println(ports)
+    println(s"+++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    ports.map { n => 
+      println(s"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      println(n)
+      println(s"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      val airsim_b = AirSimBridge(n.clock, n.bits)(p) 
+      println(s"|||||||||||||||||||||||||||||||||||||||||||||||||| AirSim")
+      println("airsim_b")
+      println(airsim_b)
+      println("n.clock")
+      println(n.clock)
+      println("n.bits")
+      println(n.bits)
+      println(s"||||||||||||||||||||||||||||||||||||||||||||||||||")
+      airsim_b
+    }
+    Nil
+  }
+})
+
+
 class WithUARTBridge extends OverrideHarnessBinder({
   (system: HasPeripheryUARTModuleImp, th: FireSim, ports: Seq[UARTPortIO]) =>
     val uartSyncClock = Wire(Clock())
@@ -105,8 +132,7 @@ class WithBlockDeviceBridge extends OverrideHarnessBinder({
     implicit val p: Parameters = GetSystemParameters(system)
     ports.map { b => BlockDevBridge(b.clock, b.bits, th.buildtopReset.asBool) }
     Nil
-  }
-})
+  } })
 
 class WithAXIOverSerialTLCombinedBridges extends OverrideHarnessBinder({
   (system: CanHavePeripheryTLSerial, th: FireSim, ports: Seq[ClockedIO[SerialIO]]) => {
@@ -235,6 +261,7 @@ class WithDefaultFireSimBridges extends Config(
   new WithSerialBridge ++
   new WithNICBridge ++
   new WithUARTBridge ++
+  new WithAirSimBridge ++
   new WithBlockDeviceBridge ++
   new WithFASEDBridge ++
   new WithFireSimMultiCycleRegfile ++

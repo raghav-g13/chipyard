@@ -33,6 +33,8 @@ object IOBinderTypes {
 }
 import IOBinderTypes._
 
+import chipyard.example._
+
 // System for instantiating binders based
 // on the scala type of the Target (_not_ its IO). This avoids needing to
 // duplicate harnesses (essentially test harnesses) for each target.
@@ -336,6 +338,9 @@ class WithBlockDeviceIOPunchthrough extends OverrideIOBinder({
   (system: CanHavePeripheryBlockDevice) => {
     val ports: Seq[ClockedIO[BlockDeviceIO]] = system.bdev.map({ bdev =>
       val p = IO(new ClockedIO(new BlockDeviceIO()(GetSystemParameters(system)))).suggestName("blockdev")
+      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BDEV")
+      println(bdev)
+      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
       p <> bdev
       p
     }).toSeq
@@ -347,6 +352,20 @@ class WithNICIOPunchthrough extends OverrideIOBinder({
   (system: CanHavePeripheryIceNIC) => {
     val ports: Seq[ClockedIO[NICIOvonly]] = system.icenicOpt.map({ n =>
       val p = IO(new ClockedIO(new NICIOvonly)).suggestName("nic")
+      p <> n
+      p
+    }).toSeq
+    (ports, Nil)
+  }
+})
+
+class WithAirSimIOPunchthrough extends OverrideIOBinder({
+  (system: CanHavePeripheryAirSimIO) => {
+    val ports: Seq[ClockedIO[AirSimPortIO]] = system.airsimio.map({ n =>
+      val p = IO(new ClockedIO(new AirSimPortIO)).suggestName("airsimio")
+      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% AirSim")
+      println(n)
+      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
       p <> n
       p
     }).toSeq

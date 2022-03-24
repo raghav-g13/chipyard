@@ -31,6 +31,7 @@ class AbstractConfig extends Config(
   new chipyard.iobinders.WithL2FBusAXI4Punchthrough ++
   new chipyard.iobinders.WithBlockDeviceIOPunchthrough ++
   new chipyard.iobinders.WithNICIOPunchthrough ++
+  new chipyard.iobinders.WithAirSimIOPunchthrough ++
   new chipyard.iobinders.WithSerialTLIOCells ++
   new chipyard.iobinders.WithDebugIOCells ++
   new chipyard.iobinders.WithUARTIOCells ++

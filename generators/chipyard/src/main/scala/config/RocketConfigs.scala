@@ -6,6 +6,10 @@ import freechips.rocketchip.diplomacy.{AsynchronousCrossing}
 // --------------
 // Rocket Configs
 // --------------
+class AirSimRocketConfig extends Config(
+  new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
+  new chipyard.config.WithUART ++                                // add a UART
+  new chipyard.config.AbstractConfig)
 
 class RocketConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
@@ -61,6 +65,14 @@ class GCDTLRocketConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++
   new chipyard.config.AbstractConfig)
 // DOC include end: GCDTLRocketConfig
+
+// DOC include start: AirSimIOTLRocketConfig
+class AirSimIOTLRocketConfig extends Config(
+  new chipyard.example.WithAirSimIO(useAXI4=false) ++          // Use GCD Chisel, connect Tilelink
+  new freechips.rocketchip.subsystem.WithNBigCores(1) ++
+  new chipyard.config.AbstractConfig)
+// DOC include end: AirSimIOTLRocketConfig
+
 
 // DOC include start: GCDAXI4BlackBoxRocketConfig
 class GCDAXI4BlackBoxRocketConfig extends Config(
