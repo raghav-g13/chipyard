@@ -17,6 +17,7 @@ sudo apt-get install -y python3.8 patch diffstat texi2html texinfo subversion ch
 sudo apt-get install -y libgtk-3-dev gettext
 # deps for firemarshal
 sudo apt-get install -y python3-pip python3.8-dev rsync libguestfs-tools expat ctags
+sudo apt-get install -y libssl-dev pkg-config libglib2.0-dev unzip
 # install DTC
 sudo apt-get install -y device-tree-compiler
 sudo apt-get install -y python
@@ -24,6 +25,7 @@ sudo apt-get install -y python
 sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get update
 sudo apt-get install git -y
+
 
 # install verilator
 sudo apt-get install -y autoconf

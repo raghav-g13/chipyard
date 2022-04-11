@@ -44,6 +44,21 @@ This will also validate that you are on a tagged branch, otherwise it will promp
 When updating Chipyard to a new version, you will also want to rerun this script to update the submodules.
 Using git directly will try to initialize all submodules; this is not recommended unless you expressly desire this behavior.
 
+Chipyard has some additional dependencies that need to be built from source. This can be done by running the following platform-specific scripts:
+
+For CentOS-based platforms, run:
+
+.. code-block:: shell
+
+    ./scripts/marshal-dependencies-centos.sh riscv-tools 
+
+
+For Ubuntu/Debian-based platforms, run:
+
+.. code-block:: shell
+
+    ./scripts/marshal-dependencies-ubuntu.sh riscv-tools 
+
 .. _build-toolchains:
 
 Building a Toolchain

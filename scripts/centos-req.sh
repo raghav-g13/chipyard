@@ -14,14 +14,15 @@ sudo mv sbt-rpm.repo /etc/yum.repos.d/
 sudo yum install -y sbt texinfo gengetopt
 sudo yum install -y expat-devel libusb1-devel ncurses-devel cmake "perl(ExtUtils::MakeMaker)"
 # deps for poky
-sudo yum install -y python38 patch diffstat texi2html texinfo subversion chrpath git wget
+sudo yum install -y patch diffstat texi2html texinfo subversion chrpath git wget
 # deps for qemu
 sudo yum install -y gtk3-devel
-# deps for firemarshal
-sudo yum install -y python38-pip python38-devel rsync libguestfs-tools makeinfo expat ctags
 # Install GNU make 4.x (needed to cross-compile glibc 2.28+)
 sudo yum install -y centos-release-scl
 sudo yum install -y devtoolset-8-make
+# deps for firemarshal
+sudo yum install -y python38 python38-pip python38-devel rsync libguestfs-tools makeinfo expat ctags
+sudo yum install -y openssl-devel pkg-config glib2-devel unzip
 # install DTC
 sudo yum install -y dtc
 sudo yum install -y python
