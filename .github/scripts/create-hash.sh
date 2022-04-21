@@ -12,7 +12,7 @@ source $SCRIPT_DIR/defaults.sh
 
 # Use normalized output of git-submodule status as hashfile
 for tools in 'riscv-tools' 'esp-tools' ; do
-    git submodule status "toolchains/${tools}" 'toolchains/libgloss' 'toolchains/qemu' |
+    git submodule status "toolchains/${tools}" 'toolchains/libgloss' |
     while read -r line ; do
         echo "${line#[!0-9a-f]}"
     done > "${tools}.hash"

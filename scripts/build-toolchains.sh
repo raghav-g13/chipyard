@@ -33,7 +33,6 @@ usage() {
     echo "Options"
     echo "   --prefix PREFIX       : Install destination. If unset, defaults to $(pwd)/riscv-tools-install"
     echo "                           or $(pwd)/esp-tools-install"
-    echo "   --ignore-qemu         : Ignore installing QEMU"
     echo "   --clean-after-install : Run make clean in calls to module_make and module_build"
     echo "   --arch -a             : Architecture (e.g., rv64gc)"
     echo "   --help -h             : Display this message"
@@ -64,8 +63,6 @@ do
         -p | --prefix )
             shift
             RISCV=$(realpath $1) ;;
-        --ignore-qemu )
-            IGNOREQEMU="true" ;;
         -a | --arch )
             shift
             ARCH=$1 ;;
@@ -148,7 +145,7 @@ else
             ;;
     esac
 
-    module_prepare riscv-gnu-toolchain qemu
+    module_prepare riscv-gnu-toolchain
     module_build riscv-gnu-toolchain --prefix="${RISCV}" --with-cmodel=medany ${ARCH:+--with-arch=${ARCH}}
     echo '==>  Building GNU/Linux toolchain'
     module_make riscv-gnu-toolchain linux
@@ -168,45 +165,6 @@ module_all riscv-tests --prefix="${RISCV}/riscv${XLEN}-unknown-elf" --with-xlen=
 # Common tools (not in any particular toolchain dir)
 
 CC= CXX= SRCDIR="$(pwd)/toolchains" module_all libgloss --prefix="${RISCV}/riscv${XLEN}-unknown-elf" --host=riscv${XLEN}-unknown-elf
-
-if [ -z "$IGNOREQEMU" ] ; then
-    echo "=>  Starting qemu build"
-    dir="$(pwd)/toolchains/qemu"
-    echo "==>   Initializing qemu submodule"
-    #since we don't want to use the global config we init passing rewrite config in to the command
-    git -c url.https://github.com/qemu.insteadOf=https://git.qemu.org/git submodule update --init --recursive "$dir"
-    echo "==>  Applying url-rewriting to avoid git.qemu.org"
-    # and once the clones exist, we recurse through them and set the rewrite
-    # in the local config so that any further commands by the user have the rewrite. uggh. git, why you so ugly?
-    git -C "$dir" config --local url.https://github.com/qemu.insteadOf https://git.qemu.org/git
-    git -C "$dir" submodule foreach --recursive 'git config --local url.https://github.com/qemu.insteadOf https://git.qemu.org/git'
-
-    # check to see whether the rewrite rules are needed any more
-    # If you find git.qemu.org in any .gitmodules file below qemu, you still need them
-    # the /dev/null redirection in the submodule grepping is to quiet non-existance of further .gitmodules
-    ! grep -q 'git\.qemu\.org' "$dir/.gitmodules" && \
-    git -C "$dir" submodule foreach --quiet --recursive '! grep -q "git\.qemu\.org" .gitmodules 2>/dev/null' && \
-    echo "==>  PLEASE REMOVE qemu URL-REWRITING from scripts/build-toolchains.sh. It is no longer needed!" && exit 1
-
-    (
-    # newer version of BFD-based ld has made '-no-pie' an error because it renamed to '--no-pie'
-    # meanwhile, ld.gold will still accept '-no-pie'
-    # QEMU 5.0 still uses '-no-pie' in it's linker options
-
-    # default LD to ld if it isn't set
-    if ( set +o pipefail; ${LD:-ld} -no-pie |& grep 'did you mean --no-pie' >/dev/null); then
-	echo "==>  LD doesn't like '-no-pie'"
-	# LD has the problem, look for ld.gold
-	if type ld.gold >&/dev/null; then
-	    echo "==>  Using ld.gold to link QEMU"
-	    export LD=ld.gold
-	fi
-    fi
-
-    # now actually do the build
-    SRCDIR="$(pwd)/toolchains" module_build qemu --prefix="${RISCV}" --target-list=riscv${XLEN}-softmmu --disable-werror
-    )
-fi
 
 # make Dromajo
 git submodule update --init $CHIPYARD_DIR/tools/dromajo/dromajo-src

@@ -83,9 +83,6 @@
 [submodule "vlsi/hammer-mentor-plugins"]
 	path = vlsi/hammer-mentor-plugins
 	url = https://github.com/ucb-bar/hammer-mentor-plugins.git
-[submodule "toolchains/qemu"]
-	path = toolchains/qemu
-	url = https://github.com/qemu/qemu.git
 [submodule "tools/axe"]
 	path = tools/axe
 	url = https://github.com/CTSRD-CHERI/axe.git

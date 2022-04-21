@@ -86,7 +86,6 @@ cd "$CHIPYARD_DIR"
         for name in \
             toolchains/*-tools/*/ \
             toolchains/libgloss \
-            toolchains/qemu \
             generators/sha3 \
             generators/gemmini \
             sims/firesim \
