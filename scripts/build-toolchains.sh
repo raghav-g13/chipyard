@@ -145,7 +145,7 @@ else
             ;;
     esac
 
-    module_prepare riscv-gnu-toolchain
+    module_prepare riscv-gnu-toolchain qemu
     module_build riscv-gnu-toolchain --prefix="${RISCV}" --with-cmodel=medany ${ARCH:+--with-arch=${ARCH}}
     echo '==>  Building GNU/Linux toolchain'
     module_make riscv-gnu-toolchain linux
