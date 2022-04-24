@@ -15,10 +15,6 @@ sudo yum install -y sbt texinfo gengetopt
 sudo yum install -y expat-devel libusb1-devel ncurses-devel cmake "perl(ExtUtils::MakeMaker)"
 # deps for poky
 sudo yum install -y python38 patch diffstat texi2html texinfo subversion chrpath git wget
-# deps for qemu
-sudo yum install -y gtk3-devel
-# deps for firemarshal
-sudo yum install -y python38-pip python38-devel rsync libguestfs-tools makeinfo expat ctags
 # Install GNU make 4.x (needed to cross-compile glibc 2.28+)
 sudo yum install -y centos-release-scl
 sudo yum install -y devtoolset-8-make
