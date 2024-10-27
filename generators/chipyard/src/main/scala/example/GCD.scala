@@ -17,24 +17,40 @@ case class GCDParams(
   address: BigInt = 0x4000,
   width: Int = 32,
   useAXI4: Boolean = false,
-  useBlackBox: Boolean = true)
+  useBlackBox: Boolean = true,
+  useBridge: Boolean = false)
 // DOC include end: GCD params
 
 // DOC include start: GCD key
 case object GCDKey extends Field[Option[GCDParams]](None)
 // DOC include end: GCD key
 
-class GCDIO(val w: Int) extends Bundle {
-  val clock = Input(Clock())
-  val reset = Input(Bool())
+
+trait GCDInnerIOTrait extends Bundle {
   val input_ready = Output(Bool())
   val input_valid = Input(Bool())
-  val x = Input(UInt(w.W))
-  val y = Input(UInt(w.W))
+  val x = Input(UInt(8.W))  // Here you may not parameterize the width with a trait
+  val y = Input(UInt(8.W))  // Fixed width for simplicity in the trait
   val output_ready = Input(Bool())
   val output_valid = Output(Bool())
-  val gcd = Output(UInt(w.W))
+  val gcd = Output(UInt(8.W)) // Fixed width
   val busy = Output(Bool())
+}
+
+class GCDInnerIO(val w: Int) extends Bundle with GCDInnerIOTrait {
+  override val x = Input(UInt(w.W))
+  override val y = Input(UInt(w.W))
+  override val gcd = Output(UInt(w.W))
+}
+
+class GCDIO(val w: Int) extends Bundle with GCDInnerIOTrait {
+  // Reuse the common IO trait and add clock/reset signals
+  override val x = Input(UInt(w.W))  // Override with parameterized width
+  override val y = Input(UInt(w.W))
+  override val gcd = Output(UInt(w.W))
+
+  val clock = Input(Clock())
+  val reset = Input(Bool())
 }
 
 class GCDTopIO extends Bundle {
@@ -96,50 +112,92 @@ class GCDTL(params: GCDParams, beatBytes: Int)(implicit p: Parameters) extends C
   override lazy val module = new GCDImpl
   class GCDImpl extends Impl with HasGCDTopIO {
     val io = IO(new GCDTopIO)
-    withClockAndReset(clock, reset) {
-      // How many clock cycles in a PWM cycle?
-      val x = Reg(UInt(params.width.W))
-      val y = Wire(new DecoupledIO(UInt(params.width.W)))
-      val gcd = Wire(new DecoupledIO(UInt(params.width.W)))
-      val status = Wire(UInt(2.W))
 
-      val impl_io = if (params.useBlackBox) {
-        val impl = Module(new GCDMMIOBlackBox(params.width))
-        impl.io
-      } else {
-        val impl = Module(new GCDMMIOChiselModule(params.width))
-        impl.io
+    if (params.useBridge) {
+      withClockAndReset(clock, reset) {
+        // How many clock cycles in a PWM cycle?
+        val x = Reg(UInt(params.width.W))
+        val y = Wire(new DecoupledIO(UInt(params.width.W)))
+        val gcd = Wire(new DecoupledIO(UInt(params.width.W)))
+        val status = Wire(UInt(2.W))
+        
+        // WHEN TO USE IO?
+        val impl_io = Wire(new GCDInnerIO(params.width))
+
+        val _impl = CustomBridge(clock, impl_io, reset.asBool, params.width)
+
+        impl_io.x := x
+        impl_io.y := y.bits
+        impl_io.input_valid := y.valid
+        y.ready := impl_io.input_ready
+
+        gcd.bits := impl_io.gcd
+        gcd.valid := impl_io.output_valid
+        impl_io.output_ready := gcd.ready
+
+        status := Cat(impl_io.input_ready, impl_io.output_valid)
+        io.gcd_busy := impl_io.busy
+
+  // DOC include start: GCD instance regmap
+        node.regmap(
+          0x00 -> Seq(
+            RegField.r(2, status)), // a read-only register capturing current status
+          0x04 -> Seq(
+            RegField.w(params.width, x)), // a plain, write-only register
+          0x08 -> Seq(
+            RegField.w(params.width, y)), // write-only, y.valid is set on write
+          0x0C -> Seq(
+            RegField.r(params.width, gcd))) // read-only, gcd.ready is set on read
+  // DOC include end: GCD instance regmap
       }
 
-      impl_io.clock := clock
-      impl_io.reset := reset.asBool
+    } else {
 
-      impl_io.x := x
-      impl_io.y := y.bits
-      impl_io.input_valid := y.valid
-      y.ready := impl_io.input_ready
+      withClockAndReset(clock, reset) {
+        // How many clock cycles in a PWM cycle?
+        val x = Reg(UInt(params.width.W))
+        val y = Wire(new DecoupledIO(UInt(params.width.W)))
+        val gcd = Wire(new DecoupledIO(UInt(params.width.W)))
+        val status = Wire(UInt(2.W))
 
-      gcd.bits := impl_io.gcd
-      gcd.valid := impl_io.output_valid
-      impl_io.output_ready := gcd.ready
+        val impl_io = if (params.useBlackBox) {
+          val impl = Module(new GCDMMIOBlackBox(params.width))
+          impl.io
+        } else {
+          val impl = Module(new GCDMMIOChiselModule(params.width))
+          impl.io
+        }
+        
+        impl_io.clock := clock
+        impl_io.reset := reset.asBool
 
-      status := Cat(impl_io.input_ready, impl_io.output_valid)
-      io.gcd_busy := impl_io.busy
+        impl_io.x := x
+        impl_io.y := y.bits
+        impl_io.input_valid := y.valid
+        y.ready := impl_io.input_ready
 
-// DOC include start: GCD instance regmap
-      node.regmap(
-        0x00 -> Seq(
-          RegField.r(2, status)), // a read-only register capturing current status
-        0x04 -> Seq(
-          RegField.w(params.width, x)), // a plain, write-only register
-        0x08 -> Seq(
-          RegField.w(params.width, y)), // write-only, y.valid is set on write
-        0x0C -> Seq(
-          RegField.r(params.width, gcd))) // read-only, gcd.ready is set on read
-// DOC include end: GCD instance regmap
+        gcd.bits := impl_io.gcd
+        gcd.valid := impl_io.output_valid
+        impl_io.output_ready := gcd.ready
+
+        status := Cat(impl_io.input_ready, impl_io.output_valid)
+        io.gcd_busy := impl_io.busy
+
+  // DOC include start: GCD instance regmap
+        node.regmap(
+          0x00 -> Seq(
+            RegField.r(2, status)), // a read-only register capturing current status
+          0x04 -> Seq(
+            RegField.w(params.width, x)), // a plain, write-only register
+          0x08 -> Seq(
+            RegField.w(params.width, y)), // write-only, y.valid is set on write
+          0x0C -> Seq(
+            RegField.r(params.width, gcd))) // read-only, gcd.ready is set on read
+  // DOC include end: GCD instance regmap
+      }
     }
   }
-}
+} 
 
 class GCDAXI4(params: GCDParams, beatBytes: Int)(implicit p: Parameters) extends ClockSinkDomain(ClockSinkParameters())(p) {
   val node = AXI4RegisterNode(AddressSet(params.address, 4096-1), beatBytes=beatBytes)
@@ -229,7 +287,7 @@ trait CanHavePeripheryGCD { this: BaseSubsystem =>
 // DOC include end: GCD lazy trait
 
 // DOC include start: GCD config fragment
-class WithGCD(useAXI4: Boolean = false, useBlackBox: Boolean = false) extends Config((site, here, up) => {
-  case GCDKey => Some(GCDParams(useAXI4 = useAXI4, useBlackBox = useBlackBox))
+class WithGCD(useAXI4: Boolean = false, useBlackBox: Boolean = false, useBridge: Boolean = false) extends Config((site, here, up) => {
+  case GCDKey => Some(GCDParams(useAXI4 = useAXI4, useBlackBox = useBlackBox, useBridge = useBridge))
 })
 // DOC include end: GCD config fragment
