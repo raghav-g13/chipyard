@@ -117,3 +117,35 @@ nitefury_firesim_rocket_singlecore_no_nic:
     deploy_quintuplet_override: null
     deploy_makefrag_override: ../../generators/firechip/chip/src/main/makefrag/firesim
     custom_runtime_config: null
+xilinx_vcu118_firesim_smallboom_singlecore_4GB_no_nic:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-09-23--18-55-06-xilinx_vcu118_firesim_smallboom_singlecore_4GB_no_nic/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoom4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz                                
+    deploy_quintuplet_override: null
+    custom_runtime_config: null 
+xilinx_vcu118_firesim_smallboom_gcd_tl_singlecore_4GB_no_nic:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-11-01--02-31-51-xilinx_vcu118_firesim_smallboom_gcd_tl_singlecore_4GB_no_nic/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTL4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null   
+xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-11-01--07-27-01-xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTLBridge4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null
+xilinx_vcu118_firesim_smallboom_gcd_tl_singlecore_4GB_no_nic_10:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-11-15--16-02-07-xilinx_vcu118_firesim_smallboom_gcd_tl_singlecore_4GB_no_nic_10/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTL4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null
+xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic_10:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-11-15--17-15-30-xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic_10/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTLBridge4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null
+xilinx_vcu118_firesim_smallboom_gcd_tl_singlecore_4GB_no_nic_100:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-11-15--18-33-25-xilinx_vcu118_firesim_smallboom_gcd_tl_singlecore_4GB_no_nic_100/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTL4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null
+xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic_100:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-11-15--19-53-13-xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic_100/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTLBridge4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null
+    #xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic:                                  
+    #    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2024-10-21--18-09-36-xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomGCDTLBridge4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz       
+    #    deploy_quintuplet_override: null
+    #    custom_runtime_config: null
