@@ -11,6 +11,30 @@ class SmallBoomV3Config extends Config(
   new boom.v3.common.WithNSmallBooms(1) ++                          // small boom config
   new chipyard.config.AbstractConfig)
 
+class SmallBoomV3AMPMPrefetcherConfig extends Config(
+  new barf.WithTLDCachePrefetcher(barf.SingleAMPMPrefetcherParams()) ++                // AMPM prefetcher, sits between L1D$ and L2, monitors L1D$ misses to prefetch into L2
+  new chipyard.config.WithTilePrefetchers ++                                           // add TL prefetchers between tiles and the sbus
+  new chipyard.SmallBoomV3Config
+)
+
+class SmallBoomV3MNLPrefetcherConfig extends Config(
+  new barf.WithTLDCachePrefetcher() ++                // AMPM prefetcher, sits between L1D$ and L2, monitors L1D$ misses to prefetch into L2
+  new chipyard.config.WithTilePrefetchers ++                                           // add TL prefetchers between tiles and the sbus
+  new chipyard.SmallBoomV3Config
+)
+
+class SmallBoomV3BridgePrefetcherConfig extends Config(
+  new barf.WithTLDCachePrefetcher(barf.BridgePrefetcherParams()) ++                // Bridge prefetcher, sits between L1D$ and L2, monitors L1D$ misses to prefetch into L2
+  new chipyard.config.WithTilePrefetchers ++                                           // add TL prefetchers between tiles and the sbus
+  new chipyard.SmallBoomV3Config
+)
+
+class SmallBoomV3NullPrefetcherConfig extends Config(
+  new barf.WithTLDCachePrefetcher(barf.NullPrefetcherParams()) ++                // Bridge prefetcher, sits between L1D$ and L2, monitors L1D$ misses to prefetch into L2
+  new chipyard.config.WithTilePrefetchers ++                                           // add TL prefetchers between tiles and the sbus
+  new chipyard.SmallBoomV3Config
+)
+
 class SmallBoomV3GCDTLConfig extends Config(
   new chipyard.example.WithGCD(useAXI4=false, useBlackBox=false) ++          // Use GCD Chisel, connect Tilelink
   new chipyard.SmallBoomV3Config

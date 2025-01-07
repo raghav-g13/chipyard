@@ -26,28 +26,28 @@ import firechip.bridgeinterfaces._
 // don't match, you'll only find out later when Golden Gate attempts to generate your module.
 class CustomBridgeModule(key: CustomKey)(implicit p: Parameters) extends BridgeModule[HostPortIO[CustomBridgeTargetIO]]()(p) {
   lazy val module = new BridgeModuleImp(this) {
-    val w = key.w
+    val ccb = key.ccb // TODO: EDIT
     // This creates the interfaces for all of the host-side transport
     // AXI4-lite for the simulation control bus, =
     // AXI4 for DMA
     val io = IO(new WidgetIO())
 
     // This creates the host-side interface of your TargetIO
-    val hPort = IO(HostPort(new CustomBridgeTargetIO(w)))
+    val hPort = IO(HostPort(new CustomBridgeTargetIO(ccb)))
 
     // Out signals - calculate using chisel3.experimental.DataMirror
-    val outputWidth = w // hPort.hBits.gcdio.out.elements.map { case (_, data) => data.getWidth }.sum
+    // val outputWidth = w // hPort.hBits.gcdio.out.elements.map { case (_, data) => data.getWidth }.sum
 
     // Generate some FIFOs to capture tokens...
-    val rxfifo = Module(new Queue(new CustomOutToken(w), 2))
+    val rxfifo = Module(new Queue(new Prefetch(ccb), 10))
 
     // In signals - calculate using chisel3.experimental.DataMirror
-    val inputWidth = 2 * w // hPort.hBits.gcdio.in.elements.map { case (_, data) => data.getWidth }.sum
+    // val inputWidth = 2 * w // hPort.hBits.gcdio.in.elements.map { case (_, data) => data.getWidth }.sum
     
     // Generate Input FIFO
-    val txfifo = Module(new Queue(new CustomInToken(w), 2))
+    val txfifo = Module(new Queue(new Snoop(ccb), 100))
 
-    val target = hPort.hBits.gcdio
+    val target = hPort.hBits.customio
     // In general, your BridgeModule will not need to do work every host-cycle. In simple Bridges,
     // we can do everything in a single host-cycle -- fire captures all of the
     // conditions under which we can consume and input token and produce a new
@@ -67,24 +67,26 @@ class CustomBridgeModule(key: CustomKey)(implicit p: Parameters) extends BridgeM
 
     val temp = RegInit(false.B)
 
-    txfifo.io.enq.bits  := target.in 
-    
-    txfifo.io.enq.valid := target.input_valid
-    temp := target.input_valid
-    target.input_ready := txfifo.io.enq.ready && ~target.input_valid//~temp
+    txfifo.io.enq.bits  := target.snoop.bits
+    txfifo.io.enq.valid := target.snoop.valid
+    temp := target.snoop.valid
 
-    target.output_valid := rxfifo.io.deq.valid
-    target.out := rxfifo.io.deq.bits
-    rxfifo.io.deq.ready := fire && target.output_ready  // TODO: HUHHHH? target.output_ready?
+    target.request.valid := rxfifo.io.deq.valid
+    target.request.bits := rxfifo.io.deq.bits
+    rxfifo.io.deq.ready := fire && target.request.ready  // TODO: HUHHHH? target.output_ready?
 
-    target.busy := false.B
+    target.hit := false.B // TODO: SOME MMIO REG
 
     // DOC include start: UART Bridge Footer
     // Exposed the head of the queue and the valid bit as a read-only registers
     // with name "out_bits" and out_valid respectively
     // genROReg(txfifo.io.deq.bits.input_valid, "input_valid")
-    genROReg(txfifo.io.deq.bits.x, "x")
-    genROReg(txfifo.io.deq.bits.y, "y")
+    // genROReg(txfifo.io.deq.bits.blockBytes, "snoop_blockBytes")
+    genROReg(txfifo.io.deq.bits.write, "snoop_write")
+    genROReg(txfifo.io.deq.bits.address, "snoop_address")
+    genROReg(txfifo.io.count, "snoop_fifo_count")
+    // genROReg(txfifo.io.deq.bits.block, "snoop_block")
+    // genROReg(txfifo.io.deq.bits.block_address, "snoop_block_address")
     // genROReg(txfifo.io.deq.bits.output_ready, "output_ready")
     genROReg(txfifo.io.deq.valid, "in_valid")
 
@@ -96,10 +98,16 @@ class CustomBridgeModule(key: CustomKey)(implicit p: Parameters) extends BridgeM
 
     // Generate registers for the rx-side of the UART; this is eseentially the reverse of the above
     // INIT => INPUT READY MUST BE HIGH, OUTPUT VALID MUST BE LOW, BUSY MUST BE LOW
-    //genWOReg(rxfifo.io.enq.bits.input_ready, "input_ready")     
-    //genWOReg(rxfifo.io.enq.bits.output_valid, "output_valid")
-    genWOReg(rxfifo.io.enq.bits.gcd, "gcd")
-    //genWOReg(rxfifo.io.enq.bits.busy, "busy")
+    // genWOReg(rxfifo.io.enq.bits.gcd, "gcd")
+    // genWOReg(rxfifo.io.enq.bits.blockBytes, "request_blockBytes")
+    genWOReg(rxfifo.io.enq.bits.write, "request_write")
+    genWOReg(rxfifo.io.enq.bits.address, "request_address")
+    // genWOReg(rxfifo.io.enq.bits.block, "request_block")
+    // genWOReg(rxfifo.io.enq.bits.block_address, "request_block_address")
+
+    // rxfifo.io.enq.bits.write := false.B
+    // rxfifo.io.enq.bits.address:= 0.U
+
     
     Pulsify(genWORegInit(rxfifo.io.enq.valid, "out_valid", false.B), pulseLength = 1)
     genROReg(rxfifo.io.enq.ready, "out_ready") // TODO: USE!

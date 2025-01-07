@@ -179,7 +179,7 @@ lazy val mempress = (project in file("generators/mempress"))
   .settings(commonSettings)
 
 lazy val barf = (project in file("generators/bar-fetchers"))
-  .dependsOn(rocketchip)
+  .dependsOn(rocketchip, firesim_lib, firechip_bridgeinterfaces)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 

@@ -302,6 +302,30 @@ class FireSimSmallBoomGCDTLBridge4GiBDRAMConfig extends Config(
   new WithFireSimConfigTweaks ++
   new chipyard.SmallBoomV3GCDTLBridgeConfig)
 
+class FireSimSmallBoomAMPMPrefetcher4GiBDRAMConfig extends Config(
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSimConfigTweaks ++
+  new chipyard.SmallBoomV3AMPMPrefetcherConfig)
+
+class FireSimSmallBoomMNLPrefetcher4GiBDRAMConfig extends Config(
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSimConfigTweaks ++
+  new chipyard.SmallBoomV3MNLPrefetcherConfig)
+
+class FireSimSmallBoomBridgePrefetcher4GiBDRAMConfig extends Config(
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSimConfigTweaks ++
+  new chipyard.SmallBoomV3BridgePrefetcherConfig)
+
+class FireSimSmallBoomNullPrefetcher4GiBDRAMConfig extends Config(
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSimConfigTweaks ++
+  new chipyard.SmallBoomV3NullPrefetcherConfig)
+
 //********************************************************************
 // Heterogeneous config, base off chipyard's LargeBoomAndRocketConfig
 //********************************************************************

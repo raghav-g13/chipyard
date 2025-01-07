@@ -712,3 +712,131 @@ xilinx_vcu118_firesim_smallboom_gcd_tl_bridge_singlecore_4GB_no_nic_1:
     post_build_hook: null
     metasim_customruntimeconfig: null
     bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_ampm_prefetcher_singlecore_4GB_no_nic_10:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomAMPMPrefetcher4GiBDRAMConfig 
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 10
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_mnl_prefetcher_singlecore_4GB_no_nic_10:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomMNLPrefetcher4GiBDRAMConfig 
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 10
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_bridge_prefetcher_singlecore_4GB_no_nic_10:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomBridgePrefetcher4GiBDRAMConfig
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 10
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_bridge_prefetcher_singlecore_4GB_no_nic_100:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomBridgePrefetcher4GiBDRAMConfig
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 100
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_bridge_prefetcher_singlecore_4GB_no_nic_50:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomBridgePrefetcher4GiBDRAMConfig
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 50
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_null_prefetcher_singlecore_4GB_no_nic_10:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomNullPrefetcher4GiBDRAMConfig
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 10
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_null_prefetcher_singlecore_4GB_no_nic_50:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomNullPrefetcher4GiBDRAMConfig
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 50
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml
+
+# Xilinx VCU118-only Config
+xilinx_vcu118_firesim_smallboom_null_prefetcher_singlecore_4GB_no_nic_100:
+    PLATFORM: xilinx_vcu118
+    TARGET_PROJECT: firesim
+    TARGET_PROJECT_MAKEFRAG: ../../generators/firechip/chip/src/main/makefrag/firesim
+    DESIGN: FireSim
+    TARGET_CONFIG: FireSimSmallBoomNullPrefetcher4GiBDRAMConfig
+    PLATFORM_CONFIG: BaseXilinxVCU118Config
+    deploy_quintuplet: null
+    platform_config_args:
+        fpga_frequency: 100
+        build_strategy: TIMING
+    post_build_hook: null
+    metasim_customruntimeconfig: null
+    bit_builder_recipe: bit-builder-recipes/xilinx_vcu118.yaml

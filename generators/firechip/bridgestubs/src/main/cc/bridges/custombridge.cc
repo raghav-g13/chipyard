@@ -23,26 +23,38 @@ void custombridge_t::init() {
 
 void custombridge_t::tick() {
   // printf("entering custombridge_t::tick()");
-  uint32_t in_valid = read(mmio_addrs.in_valid);
+  // uint32_t in_valid = read(mmio_addrs.in_valid);
+  
+  uint64_t snoop_fifo_count = read(mmio_addrs.snoop_fifo_count);
   // printf("custombridge_t::tick() in_valid = %d \n", in_valid);
-  while (in_valid) {
-    uint32_t x = read(mmio_addrs.x);
-    uint32_t y = read(mmio_addrs.y);
+  // printf("entering custombridge_t::tick() w snoop_fifo_count = %d \n", snoop_fifo_count);
+  while (read(mmio_addrs.in_valid)) {
+    
+    // uint64_t snoop_blockBytes = read(mmio_addrs.snoop_blockBytes);
+    uint64_t snoop_write = read(mmio_addrs.snoop_write);
+    uint64_t snoop_address = read(mmio_addrs.snoop_address);
+    // uint64_t snoop_block = read(mmio_addrs.snoop_block);
+    // uint64_t snoop_block_address = read(mmio_addrs.snoop_block_address);
+    
     write(mmio_addrs.in_ready, true);
-    printf("custombridge_t::tick() x = %d \n", x);
-    printf("custombridge_t::tick() y = %d \n", y);
     
-    uint32_t gcd;
-    if (x && y) {
-      gcd = std::gcd(x, y);
-    } else {
-      gcd = 0;
-    } 
-    printf("custombridge_t::tick() gcd = %d \n", gcd);
-    write(mmio_addrs.gcd, gcd);
-    write(mmio_addrs.out_valid, true);
+    // printf("custombridge_t::tick() snoop_blockBytes = %d \n", snoop_blockBytes);
+    // printf("custombridge_t::tick() snoop_write = %d \n", snoop_write);
+    // printf("custombridge_t::tick() snoop_address = %d \n", snoop_address);
+    // printf("custombridge_t::tick() snoop_block = %d \n", snoop_block);
+    // printf("custombridge_t::tick() snoop_block_address = %d \n", snoop_block_address);
+
+    write(mmio_addrs.out_valid, false);
     
-    in_valid = read(mmio_addrs.in_valid);
+    // in_valid = read(mmio_addrs.in_valid);
+    uint64_t snoop_fifo_count = read(mmio_addrs.snoop_fifo_count);
+    // printf("inside loop in custombridge_t::tick() snoop_fifo_count = %d \n", snoop_fifo_count);
+
+    if (snoop_fifo_count == 100) {
+      printf("hit limit \n");
+      return;
+    }
+  
   }
   // printf("exiting custombridge_t::tick()");
 }

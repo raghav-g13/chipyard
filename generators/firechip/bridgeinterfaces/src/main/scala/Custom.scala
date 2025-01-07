@@ -3,12 +3,37 @@
 package firechip.bridgeinterfaces
 
 import chisel3._
+import chisel3.util._
 
 // Note: This file is heavily commented as it serves as a bridge walkthrough
 // example in the FireSim docs
 
 // Note: All code in this file must be isolated from target-side generators/classes/etc
 // since this is also injected into the midas compiler.
+
+class Snoop(val ccb: Int, val addrWidth: Int = 32) extends Bundle {
+  // val blockBytes = ccb
+
+  val write = Bool()
+  val address = UInt(addrWidth.W)
+  // def block = address >> log2Up(ccb)
+  // def block_address = block << log2Up(ccb)
+}
+
+class Prefetch(val ccb: Int, val addrWidth: Int = 32) extends Bundle {
+  // val blockBytes = ccb
+
+  val write = Bool()
+  val address = UInt(addrWidth.W)
+  // def block = address >> log2Up(ccb)
+  // def block_address = block << log2Up(ccb)
+}
+
+class PrefetcherIO(val ccb: Int) extends Bundle {
+  val snoop = Input(Valid(new Snoop(ccb)))
+  val request = Decoupled(new Prefetch(ccb))
+  val hit = Output(Bool())
+}
 
 class CustomIOIn(val w: Int) extends Bundle {
   val x = Input(UInt(w.W))
@@ -38,10 +63,10 @@ class CustomIO(val w: Int) extends Bundle {
   val busy = Output(Bool())
 }
 
-class CustomBridgeTargetIO(val w: Int) extends Bundle {
+class CustomBridgeTargetIO(val ccb: Int) extends Bundle {
   val clock = Input(Clock())
   // TODO: IS THIS RIGHT? SHOULDN"T BE FLIPPED
-  val gcdio = new CustomIO(w)
+  val customio = new PrefetcherIO(ccb)
   // Note this reset is optional and used only to reset target-state modeled
   // in the bridge. This reset is just like any other Bool included in your target
   // interface, simply appears as another Bool in the input token.
@@ -52,4 +77,4 @@ class CustomBridgeTargetIO(val w: Int) extends Bundle {
 // metadata we'd like to pass to the host-side BridgeModule. Note, we need to
 // use a single case class to do so, even if it is simply to wrap a primitive
 // type, as is the case for the div Int.
-case class CustomKey(w: Int)
+case class CustomKey(ccb: Int)

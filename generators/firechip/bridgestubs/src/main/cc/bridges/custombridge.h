@@ -25,20 +25,22 @@ struct CUSTOMBRIDGEMODULE_struct {
   // TODO: CLEAN UP WHICH SIGNALS GET PASSED ON TO HOST MODULES - do we need to pass all ready/valids 
   // TXFIFO - INPUTS
 
-  //uint64_t input_valid;
-  uint64_t x;
-  uint64_t y;
-  //uint64_t output_ready;
-  
+  // uint64_t snoop_blockBytes;
+  uint64_t snoop_write;
+  uint64_t snoop_address;
+  uint64_t snoop_fifo_count;
+  // uint64_t snoop_block;
+  // uint64_t snoop_block_address;
   uint64_t in_valid;
   uint64_t in_ready;
 
   // RXFIFO - OUTS
 
-  //uint64_t input_ready;
-  //uint64_t output_valid;
-  uint64_t gcd;
-  //uint64_t busy;
+  // uint64_t request_blockBytes;
+  uint64_t request_write;
+  uint64_t request_address;
+  // uint64_t request_block;
+  // uint64_t request_block_address;
 
   uint64_t out_valid; 
   uint64_t out_ready;
