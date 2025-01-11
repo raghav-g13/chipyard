@@ -28,7 +28,7 @@ struct CUSTOMBRIDGEMODULE_struct {
   // uint64_t snoop_blockBytes;
   uint64_t snoop_write;
   uint64_t snoop_address;
-  uint64_t snoop_fifo_count;
+  // uint64_t snoop_fifo_count;
   // uint64_t snoop_block;
   // uint64_t snoop_block_address;
   uint64_t in_valid;
@@ -61,10 +61,10 @@ public:
   
   void init() override;
   void tick() override;
-
+  void finish() override;
 private:
   const CUSTOMBRIDGEMODULE_struct mmio_addrs;
-
+  uint64_t num_requests;
 };
 
 #endif // __CUSTOM_H

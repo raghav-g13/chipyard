@@ -45,7 +45,7 @@ class CustomBridgeModule(key: CustomKey)(implicit p: Parameters) extends BridgeM
     // val inputWidth = 2 * w // hPort.hBits.gcdio.in.elements.map { case (_, data) => data.getWidth }.sum
     
     // Generate Input FIFO
-    val txfifo = Module(new Queue(new Snoop(ccb), 100))
+    val txfifo = Module(new Queue(new Snoop(ccb), 1))
 
     val target = hPort.hBits.customio
     // In general, your BridgeModule will not need to do work every host-cycle. In simple Bridges,
@@ -84,7 +84,7 @@ class CustomBridgeModule(key: CustomKey)(implicit p: Parameters) extends BridgeM
     // genROReg(txfifo.io.deq.bits.blockBytes, "snoop_blockBytes")
     genROReg(txfifo.io.deq.bits.write, "snoop_write")
     genROReg(txfifo.io.deq.bits.address, "snoop_address")
-    genROReg(txfifo.io.count, "snoop_fifo_count")
+    // genROReg(txfifo.io.count, "snoop_fifo_count")
     // genROReg(txfifo.io.deq.bits.block, "snoop_block")
     // genROReg(txfifo.io.deq.bits.block_address, "snoop_block_address")
     // genROReg(txfifo.io.deq.bits.output_ready, "output_ready")

@@ -19,13 +19,18 @@ custombridge_t::~custombridge_t() = default;
 
 void custombridge_t::init() {
   // NOTHING FOR NOW
+  num_requests = 0;
+}
+
+void custombridge_t::finish() {
+  printf("custombridge_t::finish() num_requests = %d \n", num_requests);
 }
 
 void custombridge_t::tick() {
   // printf("entering custombridge_t::tick()");
   // uint32_t in_valid = read(mmio_addrs.in_valid);
   
-  uint64_t snoop_fifo_count = read(mmio_addrs.snoop_fifo_count);
+  // uint64_t snoop_fifo_count = read(mmio_addrs.snoop_fifo_count);
   // printf("custombridge_t::tick() in_valid = %d \n", in_valid);
   // printf("entering custombridge_t::tick() w snoop_fifo_count = %d \n", snoop_fifo_count);
   while (read(mmio_addrs.in_valid)) {
@@ -36,6 +41,7 @@ void custombridge_t::tick() {
     // uint64_t snoop_block = read(mmio_addrs.snoop_block);
     // uint64_t snoop_block_address = read(mmio_addrs.snoop_block_address);
     
+    num_requests += 1;
     write(mmio_addrs.in_ready, true);
     
     // printf("custombridge_t::tick() snoop_blockBytes = %d \n", snoop_blockBytes);
@@ -47,13 +53,13 @@ void custombridge_t::tick() {
     write(mmio_addrs.out_valid, false);
     
     // in_valid = read(mmio_addrs.in_valid);
-    uint64_t snoop_fifo_count = read(mmio_addrs.snoop_fifo_count);
+    // uint64_t snoop_fifo_count = read(mmio_addrs.snoop_fifo_count);
     // printf("inside loop in custombridge_t::tick() snoop_fifo_count = %d \n", snoop_fifo_count);
 
-    if (snoop_fifo_count == 100) {
-      printf("hit limit \n");
-      return;
-    }
+    // if (snoop_fifo_count == 100) {
+    //   printf("hit limit \n");
+    //   return;
+    // }
   
   }
   // printf("exiting custombridge_t::tick()");
