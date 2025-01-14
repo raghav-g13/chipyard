@@ -1,3 +1,4 @@
+/*
 // See LICENSE for license details
 
 package chipyard.example
@@ -60,3 +61,4 @@ object CustomBridge {
   }
 }
 // DOC include end: UART Bridge Companion Object
+*/

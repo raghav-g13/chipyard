@@ -158,7 +158,7 @@ lazy val chipyard = (project in file("generators/chipyard"))
     dsptools, rocket_dsp_utils,
     gemmini, icenet, tracegen, cva6, nvdla, sodor, ibex, fft_generator,
     constellation, mempress, barf, shuttle, caliptra_aes, rerocc,
-    compressacc, saturn, ara, firrtl2_bridge, firesim_lib, firechip_bridgeinterfaces)
+    compressacc, saturn, ara, firrtl2_bridge, firesim_lib, firechip_bridgeinterfaces, rocccustombridge)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(
     libraryDependencies ++= Seq(
@@ -180,6 +180,11 @@ lazy val mempress = (project in file("generators/mempress"))
 
 lazy val barf = (project in file("generators/bar-fetchers"))
   .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val rocccustombridge = (project in file("generators/rocc-custom-bridge"))
+  .dependsOn(rocketchip, firesim_lib, firechip_bridgeinterfaces)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 
@@ -376,6 +381,7 @@ lazy val firesim_lib = (project in firesimDir / "sim/firesim-lib")
 // Minimal in scope (should only depend on Chisel/Firrtl).
 // This is copied to FireSim's GoldenGate compiler.
 lazy val firechip_bridgeinterfaces = (project in file("generators/firechip/bridgeinterfaces"))
+  // .dependsOn(rocketchip)
   .settings(
     chiselSettings,
     commonSettings,

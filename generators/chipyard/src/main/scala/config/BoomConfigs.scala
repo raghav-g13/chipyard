@@ -1,6 +1,7 @@
 package chipyard
 
 import org.chipsalliance.cde.config.{Config}
+import chipyard.config.WithAccumulatorRoCC
 
 // ---------------------
 // BOOM V3 Configs
@@ -11,25 +12,15 @@ class SmallBoomV3Config extends Config(
   new boom.v3.common.WithNSmallBooms(1) ++                          // small boom config
   new chipyard.config.AbstractConfig)
 
-class SmallBoomV3GCDTLConfig extends Config(
-  new chipyard.example.WithGCD(useAXI4=false, useBlackBox=false) ++          // Use GCD Chisel, connect Tilelink
-  new chipyard.SmallBoomV3Config
-)
+class SmallBoomV3RoCCBridgeConfig extends Config(
+  new rocccustombridge.WithBridgeRoCC ++
+  new chipyard.SmallBoomV3Config 
+) 
 
-class SmallBoomV3GCDTLBridgeConfig extends Config(
-  new chipyard.example.WithGCD(useAXI4=false, useBlackBox=false, useBridge=true) ++          // Use GCD Chisel, connect Tilelink, connect PeekPokeBridge
-  new chipyard.SmallBoomV3Config
-)
-
-class SmallBoomV3GCDAXI4Config extends Config(
-  new chipyard.example.WithGCD(useAXI4=true, useBlackBox=false) ++          // Use GCD Chisel, connect AXI4->TL
-  new chipyard.SmallBoomV3Config
-)
-
-class SmallBoomV3GCDAXI4BridgeConfig extends Config(
-  new chipyard.example.WithGCD(useAXI4=true, useBlackBox=false, useBridge=true) ++          // Use GCD Chisel, connect AXI4->TL, connect PeekPokeBridge
-  new chipyard.SmallBoomV3Config
-)
+class SmallBoomV3RoCCAccumConfig extends Config(
+  new WithAccumulatorRoCC ++
+  new chipyard.SmallBoomV3Config 
+) 
 
 class MediumBoomV3Config extends Config(
   new boom.v3.common.WithNMediumBooms(1) ++                         // medium boom config
