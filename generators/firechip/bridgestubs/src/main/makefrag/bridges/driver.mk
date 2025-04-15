@@ -6,6 +6,7 @@
 
 firechip_lib_dir = $(chipyard_dir)/generators/firechip/bridgestubs/src/main/cc
 testchipip_csrc_dir = $(chipyard_dir)/generators/testchipip/src/main/resources/testchipip/csrc
+# custombridge_dir = $(firechip_lib_dir)/bridges/custombridge
 
 # DRIVER_H only used to update recipe pre-reqs (ok to track more files)
 
@@ -40,21 +41,23 @@ TARGET_CXX_FLAGS += -I$(firechip_lib_dir)/bridge/test
 # exclude the following types of files for unit testing
 EXCLUDE_LIST := cospike dmibridge groundtest simplenic tsibridge
 DRIVER_H += $(shell find $(firechip_lib_dir) -name "*.h")
+DRIVER_H += $(shell find $(firechip_lib_dir)/bridges/custombridge/ -name "*.h")
 DRIVER_CC += \
 		$(filter-out \
 			$(addprefix $(firechip_lib_dir)/bridges/,$(addsuffix .cc,$(EXCLUDE_LIST))), \
 			$(wildcard \
 				$(addprefix \
 					$(firechip_lib_dir)/, \
-					$(addsuffix .cc,bridges/* bridges/tracerv/*) \
+					$(addsuffix .cc,bridges/* bridges/tracerv/* bridges/custombridge/*) \
 				) \
 			) \
 		)
 TARGET_CXX_FLAGS += \
 		-I$(firechip_lib_dir) \
-		-I$(firechip_lib_dir)/bridge \
-		-I$(firechip_lib_dir)/bridge/tracerv
-TARGET_LD_FLAGS += -l:libdwarf.so -l:libelf.so
+		-I$(firechip_lib_dir)/bridges \
+		-I$(firechip_lib_dir)/bridges/tracerv \
+	  	-I$(firechip_lib_dir)/bridges/custombridge	
+TARGET_LD_FLAGS += -l:libdwarf.so -l:libelf.so 
 
 # other
 TARGET_CXX_FLAGS += \

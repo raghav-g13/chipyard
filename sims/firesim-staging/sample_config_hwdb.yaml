@@ -173,3 +173,7 @@ xilinx_vcu118_firesim_smallboom_rocc_accum_singlecore_4GB_no_nic_50:
     bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2025-01-13--05-09-07-xilinx_vcu118_firesim_smallboom_rocc_accum_singlecore_4GB_no_nic_50/cl_xilinx_vcu118-firesim-FireSim-FireSimSmallBoomRoCCAccum4GiBDRAMConfig-BaseXilinxVCU118Config/firesim.tar.gz
     deploy_quintuplet_override: null
     custom_runtime_config: null
+alveo_u250_firesim_smallboom_rocc_bridge_singlecore_4GB_no_nic_10:
+    bitstream_tar: file:///home/raghavgupta/hybrid-sim/chipyard/sims/firesim/deploy/results-build/2025-04-08--23-22-58-alveo_u250_firesim_smallboom_rocc_bridge_singlecore_4GB_no_nic_10/cl_xilinx_alveo_u250-firesim-FireSim-FireSimSmallBoomRoCCBridge4GiBDRAMConfig-BaseXilinxAlveoU250Config/firesim.tar.gz
+    deploy_quintuplet_override: null
+    custom_runtime_config: null

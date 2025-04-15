@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "bridges/custombridge/model.h"
+
 /**
  * Structure carrying the addresses of all fixed MMIO ports.
  *
@@ -59,9 +61,12 @@ public:
   
   void init() override;
   void tick() override;
+  void finish() override; 
 
 private:
   const CUSTOMBRIDGEMODULE_struct mmio_addrs;
+  FifoHandler fifoHandler;
+  int num_transactions;
 
 };
 

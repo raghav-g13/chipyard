@@ -17,6 +17,11 @@ class SmallBoomV3RoCCBridgeConfig extends Config(
   new chipyard.SmallBoomV3Config 
 ) 
 
+class SmallBoomV3RoCCAddConfig extends Config(
+  new rocccustombridge.WithCustomAccRoCC ++
+  new chipyard.SmallBoomV3Config
+)
+
 class SmallBoomV3RoCCAccumConfig extends Config(
   new WithAccumulatorRoCC ++
   new chipyard.SmallBoomV3Config 

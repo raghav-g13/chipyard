@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Vivado v2023.1 (64-bit)
+# SW Build 3865809 on Sun May  7 15:04:56 MDT 2023
+# IP Build 3864474 on Sun May  7 20:36:21 MDT 2023
+# SharedData Build 3865790 on Sun May 07 13:33:03 MDT 2023
+# Start of session at: Sat Apr 12 00:17:58 2025
+# Process ID: 4108865
+# Current directory: /home/raghavgupta/hybrid-sim/chipyard/sims/verilator/hacking-add/logs
+# Command line: vivado -mode gui
+# Log file: /home/raghavgupta/hybrid-sim/chipyard/sims/verilator/hacking-add/logs/vivado.log
+# Journal file: /home/raghavgupta/hybrid-sim/chipyard/sims/verilator/hacking-add/logs/vivado.jou
+# Running On: akpc, OS: Linux, CPU Frequency: 4698.921 MHz, CPU Physical cores: 8, Host memory: 67082 MB
+#-----------------------------------------------------------
+start_gui

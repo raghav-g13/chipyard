@@ -50,14 +50,15 @@ DRIVER_CC += \
 		$(wildcard \
 			$(addprefix \
 				$(firechip_bridgestubs_lib_dir)/, \
-				$(addsuffix .cc,bridges/* bridges/tracerv/* bridges/cospike/*) \
+				$(addsuffix .cc,bridges/* bridges/tracerv/* bridges/cospike/* bridges/custombridge/*) \
 			) \
 		)
 TARGET_CXX_FLAGS += \
 		-I$(firechip_bridgestubs_lib_dir) \
-		-I$(firechip_bridgestubs_lib_dir)/bridge \
-		-I$(firechip_bridgestubs_lib_dir)/bridge/tracerv \
-		-I$(firechip_bridgestubs_lib_dir)/bridge/cospike
+		-I$(firechip_bridgestubs_lib_dir)/bridges \
+		-I$(firechip_bridgestubs_lib_dir)/bridges/tracerv \
+		-I$(firechip_bridgestubs_lib_dir)/bridges/cospike \
+		-I$(firechip_bridgestubs_lib_dir)/bridges/custombridge
 TARGET_LD_FLAGS += \
 	-l:libdwarf.so -l:libelf.so \
 	-lz \

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <numeric>
+#include "bridges/custombridge/model.h"
 
 char custombridge_t::KIND;
 
@@ -19,11 +20,20 @@ custombridge_t::~custombridge_t() = default;
 
 void custombridge_t::init() {
   // NOTHING FOR NOW
+  if (fifoHandler.openFifos()) {
+    printf("ERROR opening fifos for custom bridge");
+  }
+  num_transactions = 0;
 }
 
 uint32_t getRd(uint32_t inst) {
     return (inst >> 7) & 0x1F; // Extract bits 11–7 and return
 }
+
+void custombridge_t::finish() { 
+  fifoHandler.writeToCtrlFifo(Control::STOP);
+  fifoHandler.closeFifos();
+};
 
 void custombridge_t::tick() {
   // printf("entering custombridge_t::tick()");
@@ -44,9 +54,20 @@ void custombridge_t::tick() {
     write(mmio_addrs.in_ready, true);
     printf("custombridge_t::tick() rs1 = %d \n", rs1);
     printf("custombridge_t::tick() rs2 = %d \n", rs2);
-    
-    uint32_t rd = getRd(inst); 
-    uint64_t data = rs1 + rs2;
+
+    if (!num_transactions) {
+      fifoHandler.writeToCtrlFifo(Control::START);
+    } else {
+      fifoHandler.writeToCtrlFifo(Control::CONTINUE);
+    }
+
+    ins inputs{getRd(inst), rs1, rs2};
+    fifoHandler.writeToInFifo(inputs);
+    outs outputs = fifoHandler.readFromOutFifo(); 
+    // uint32_t rd = getRd(inst); 
+    // uint64_t data = rs1 + rs2;
+    uint32_t rd = outputs.io_resp_bits_rd; 
+    uint64_t data = outputs.io_resp_bits_data;
     printf("custombridge_t::tick() rd = %d \n", rd);
     printf("custombridge_t::tick() data = %d \n", data);
 
