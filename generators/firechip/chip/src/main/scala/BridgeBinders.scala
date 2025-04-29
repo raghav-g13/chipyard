@@ -8,7 +8,7 @@ import org.chipsalliance.cde.config.{Config}
 import freechips.rocketchip.diplomacy.{LazyModule}
 import freechips.rocketchip.subsystem._
 import sifive.blocks.devices.uart._
-import testchipip.serdes.{DecoupledExternalSyncPhitIO}
+import testchipip.serdes.{DecoupledExternalSyncPhitIO, CreditedSourceSyncPhitIO}
 import testchipip.tsi.{SerialRAM}
 
 import chipyard.iocell._
@@ -71,6 +71,12 @@ class WithTSIBridgeAndHarnessRAMOverSerialTL extends HarnessBinder({
         val hasMainMemory = th.chipParameters(chipId)(ExtMem).isDefined
         val mainMemoryName = Option.when(hasMainMemory)(MainMemoryConsts.globalName(chipId))
         TSIBridge(th.harnessBinderClock, ram.io.tsi.get, mainMemoryName, th.harnessBinderReset.asBool)(th.p)
+      }
+      case io: CreditedSourceSyncPhitIO => {
+        io.clock_in := false.B.asClock
+        io.reset_in := false.B.asAsyncReset
+        io.in.valid := false.B
+        io.in.bits := DontCare 
       }
     }
   }

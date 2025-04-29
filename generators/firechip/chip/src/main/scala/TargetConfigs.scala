@@ -126,6 +126,19 @@ class WithFireSimConfigTweaks extends Config(
   new WithFireSimDesignTweaks
 )
 
+class WithFireSim500ConfigTweaks extends Config(
+  // 1 GHz matches the FASED default (DRAM modeli realistically configured for that frequency)
+  // Using some other frequency will require runnings the FASED runtime configuration generator
+  // to generate faithful DDR3 timing values.
+  new chipyard.config.WithSystemBusFrequency(500.0) ++
+  new chipyard.config.WithControlBusFrequency(500.0) ++
+  new chipyard.config.WithPeripheryBusFrequency(500.0) ++
+  new chipyard.config.WithControlBusFrequency(500.0) ++
+  new chipyard.config.WithMemoryBusFrequency(500.0) ++
+  new chipyard.config.WithFrontBusFrequency(500.0) ++
+  new WithFireSimDesignTweaks
+)
+
 // Tweaks to use minimal design tweaks
 // Need to use initramfs to use linux (no block device)
 class WithMinimalFireSimHighPerfConfigTweaks extends Config(
@@ -216,10 +229,19 @@ class FireSimRocketMMIOOnly4GiBDRAMConfig extends Config(
   new FireSimRocketMMIOOnlyConfig)
 
 class FireSimQuadRocketConfig extends Config(
+
   new WithDefaultFireSimBridges ++
   new WithFireSimConfigTweaks ++
   new chipyard.QuadRocketConfig)
 
+class FireSimKodiakConfig extends Config(
+  // We don't have any memory channels on the SoC, memory reuqests are served over TSI by a "host"
+  // new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSim500ConfigTweaks ++
+  new chipyard.KodiakFireSimConfig)
+
+// DOC include end: firesimconfig
 // A stripped down configuration that should fit on all supported hosts.
 // Flat to avoid having to reorganize the config class hierarchy to remove certain features
 class FireSimSmallSystemConfig extends Config(

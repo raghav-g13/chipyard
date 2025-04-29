@@ -229,7 +229,8 @@ class WithSerialTLTiedOff(tieoffs: Option[Seq[Int]] = None) extends HarnessBinde
       case io: CreditedSourceSyncPhitIO => {
         io.clock_in := false.B.asClock
         io.reset_in := false.B.asAsyncReset
-        io.in := DontCare
+        io.in.valid := false.B
+        io.in.bits := DontCare
       }
     }
     port.io match {
