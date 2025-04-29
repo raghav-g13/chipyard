@@ -236,7 +236,7 @@ class FireSimQuadRocketConfig extends Config(
 
 class FireSimKodiakConfig extends Config(
   // We don't have any memory channels on the SoC, memory reuqests are served over TSI by a "host"
-  // new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 16L) ++
   new WithDefaultFireSimBridges ++
   new WithFireSim500ConfigTweaks ++
   new chipyard.KodiakFireSimConfig)
