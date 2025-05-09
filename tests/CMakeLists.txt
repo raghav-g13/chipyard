@@ -85,6 +85,7 @@ add_executable(gcd gcd.c)
 add_executable(hello hello.c)
 add_executable(mt-hello mt-hello.c)
 add_executable(symmetric symmetric.c)
+add_executable(add add.c)
 
 #################################
 # Disassembly

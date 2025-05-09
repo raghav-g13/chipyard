@@ -34,11 +34,11 @@ DRIVER_CC += \
 			bridges/test/BridgeHarness.cc \
 			bridges/test/$(DESIGN).cc \
 		))
-TARGET_CXX_FLAGS += -I$(firechip_lib_dir)/bridge/test
+TARGET_CXX_FLAGS += -I$(firechip_lib_dir)/bridges/test
 
 # bridge sources
 # exclude the following types of files for unit testing
-EXCLUDE_LIST := cospike dmibridge groundtest simplenic tsibridge
+EXCLUDE_LIST := cospike dmibridge groundtest simplenic tsibridge 
 DRIVER_H += $(shell find $(firechip_lib_dir) -name "*.h")
 DRIVER_CC += \
 		$(filter-out \
@@ -52,8 +52,8 @@ DRIVER_CC += \
 		)
 TARGET_CXX_FLAGS += \
 		-I$(firechip_lib_dir) \
-		-I$(firechip_lib_dir)/bridge \
-		-I$(firechip_lib_dir)/bridge/tracerv
+		-I$(firechip_lib_dir)/bridges \
+		-I$(firechip_lib_dir)/bridges/tracerv
 TARGET_LD_FLAGS += -l:libdwarf.so -l:libelf.so
 
 # other

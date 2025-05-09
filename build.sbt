@@ -158,7 +158,7 @@ lazy val chipyard = (project in file("generators/chipyard"))
     dsptools, rocket_dsp_utils,
     radiance, gemmini, icenet, tracegen, cva6, nvdla, sodor, ibex, fft_generator,
     constellation, mempress, barf, shuttle, caliptra_aes, rerocc,
-    compressacc, saturn, ara, firrtl2_bridge, vexiiriscv, tacit)
+    compressacc, saturn, ara, firrtl2_bridge, vexiiriscv, tacit, rocccustombridge)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(
     libraryDependencies ++= Seq(
@@ -210,6 +210,11 @@ lazy val icenet = (project in file("generators/icenet"))
 
 lazy val boom = freshProject("boom", file("generators/boom"))
   .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val rocccustombridge = (project in file("generators/rocc-custom-bridge"))
+  .dependsOn(rocketchip, firesim_lib, firechip_bridgeinterfaces)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 

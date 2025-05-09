@@ -163,3 +163,6 @@
 [submodule "generators/radiance"]
 	path = generators/radiance
 	url = https://github.com/ucb-bar/radiance.git
+[submodule "generators/rocc-custom-bridge"]
+	path = generators/rocc-custom-bridge
+	url = git@github.com:raghav-g13/rocc-custom-bridge.git

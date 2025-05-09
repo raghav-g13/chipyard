@@ -3,12 +3,18 @@ package chipyard
 import org.chipsalliance.cde.config.{Config}
 import freechips.rocketchip.prci.{AsynchronousCrossing}
 import freechips.rocketchip.subsystem.{InCluster}
+import rocccustombridge.{WithCustomAccRoCC}
 
 // --------------
 // Rocket Configs
 // --------------
 
 class RocketConfig extends Config(
+  new freechips.rocketchip.rocket.WithNHugeCores(1) ++         // single rocket-core
+  new chipyard.config.AbstractConfig)
+
+class CustomAccRoCCRocketConfig extends Config(
+  new rocccustombridge.WithCustomAccRoCC ++         // single rocket-core
   new freechips.rocketchip.rocket.WithNHugeCores(1) ++         // single rocket-core
   new chipyard.config.AbstractConfig)
 

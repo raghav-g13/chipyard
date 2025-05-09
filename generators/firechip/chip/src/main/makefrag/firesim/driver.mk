@@ -42,7 +42,7 @@ TARGET_LD_FLAGS += \
 
 # top-level sources
 DRIVER_CC += $(addprefix $(firechip_lib_dir)/firesim/, $(addsuffix .cc, firesim_top))
-TARGET_CXX_FLAGS += -I$(firechip_bridgestubs_lib_dir)/bridge/test
+TARGET_CXX_FLAGS += -I$(firechip_bridgestubs_lib_dir)/bridges/test
 
 # bridge sources
 DRIVER_H += $(shell find $(firechip_bridgestubs_lib_dir) -name "*.h")
@@ -55,9 +55,9 @@ DRIVER_CC += \
 		)
 TARGET_CXX_FLAGS += \
 		-I$(firechip_bridgestubs_lib_dir) \
-		-I$(firechip_bridgestubs_lib_dir)/bridge \
-		-I$(firechip_bridgestubs_lib_dir)/bridge/tracerv \
-		-I$(firechip_bridgestubs_lib_dir)/bridge/cospike
+		-I$(firechip_bridgestubs_lib_dir)/bridges \
+		-I$(firechip_bridgestubs_lib_dir)/bridges/tracerv \
+		-I$(firechip_bridgestubs_lib_dir)/bridges/cospike 
 TARGET_LD_FLAGS += \
 	-l:libdwarf.so -l:libelf.so \
 	-lz \
