@@ -37,6 +37,7 @@ import testchipip.util.{ClockedIO}
 import testchipip.iceblk.{CanHavePeripheryBlockDevice, BlockDeviceKey, BlockDeviceIO}
 import testchipip.cosim.{CanHaveTraceIO, TraceOutputTop, SpikeCosimConfig}
 import testchipip.tsi.{CanHavePeripheryUARTTSI, UARTTSIIO}
+import testchipip.ctc.{CanHavePeripheryCTC}
 import icenet.{CanHavePeripheryIceNIC, SimNetwork, NicLoopback, NICKey, NICIOvonly}
 import chipyard.{CanHaveMasterTLMemPort, ChipyardSystem, ChipyardSystemModule}
 import chipyard.example.{CanHavePeripheryGCD}
@@ -577,3 +578,37 @@ class WithOffchipBusSel extends OverrideIOBinder({
     }.getOrElse(Nil, Nil)
   }
 })
+
+class WithCTCPunchthrough extends OverrideIOBinder({
+  (system: CanHavePeripheryCTC) => {
+    val ports = system.ctc_io.map { p =>
+      val port = IO(chiselTypeOf(p.getWrappedValue)) // Since CTC IO varies depending on params
+      port <> p.getWrappedValue
+      CTCPort(() => port)
+    }
+    (ports.toSeq, Nil)
+  }
+})
+
+// Legacy version (commented out)
+/*
+class WithCTCPunchthrough extends OverrideIOBinder({
+  (system: CanHavePeripheryCTC) => {
+    val ports = system.ctc_io.map { p =>
+      p match {
+        case io: CTCBridgeIO => {
+          val port = IO(new CTCBridgeIO) // Since CTC IO varies depending on params
+          port <> p.getWrappedValue
+          CTCPort(() => port)
+        }
+        case _ => {
+          val port = IO(chiselTypeOf(p.getWrappedValue)) // Since CTC IO varies depending on params
+          port <> p.getWrappedValue
+          CTCPort(() => port)
+        }
+      }
+    }
+    (ports.toSeq, Nil)
+  }
+})
+*/

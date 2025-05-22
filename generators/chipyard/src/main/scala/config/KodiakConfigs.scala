@@ -498,6 +498,213 @@ class KodiakFireSimConfig extends Config (
   new chipyard.config.AbstractConfig
 )
 
+class KodiakFireSimCTCConfig extends Config (
+
+  //==================================
+  // Set up buses
+  //==================================
+  // TODO: THIS NEEDS TO BE RESTORED
+  new chipyard.config.WithSystemBusWidth(256) ++
+
+
+  //==================================
+  // Set up TestHarness
+  //==================================
+  new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++ // use absolute frequencies for simulations in the harness
+                                                                   // NOTE: This only simulates properly in VCS
+  new testchipip.soc.WithChipIdPin ++                               // Add pin to identify chips
+  
+  // Success error, tie-off doesn't work
+  // new chipyard.harness.WithTiedOffJTAG ++
+  // new chipyard.harness.WithTiedOffDMI ++
+
+  // Success error, let's try WithNoDebug
+  new chipyard.config.WithNoDebug ++
+
+  // new chipyard.harness.WithSerialTLTiedOff(tieoffs=Some(Seq(1))) ++ // Tie-off the chip-to-chip link in single-chip sims
+  new chipyard.harness.WithDriveChipIdPin ++
+  // new chipyard.harness.WithOffchipBusSelPlusArg ++
+
+
+  //==================================
+  // Set up peripherals
+  //==================================
+  new testchipip.boot.WithNoCustomBootPin ++
+  new chipyard.config.WithNoBusErrorDevices ++
+
+  new freechips.rocketchip.subsystem.WithoutTLMonitors ++
+
+  //==================================
+  // Rocket
+  //==================================
+  // ICache
+  new freechips.rocketchip.rocket.WithL1ICacheWays(2) ++
+  new freechips.rocketchip.rocket.WithL1ICacheSets(128) ++
+  new freechips.rocketchip.rocket.WithL1ICacheBlockBytes(64) ++
+  new freechips.rocketchip.rocket.WithNBigCores(1) ++
+  // DCache
+  new freechips.rocketchip.rocket.WithL1DCacheBlockBytes(64) ++
+  new freechips.rocketchip.rocket.WithL1DCacheSets(128) ++
+  new freechips.rocketchip.rocket.WithL1DCacheWays(4) ++
+  // new chipyard.config.WithRocketBoundaryBuffers ++         // Add buffer to meet timing at chip boundary (from ext memory)
+  // new chipyard.config.WithRocketCacheRowBits(64) ++        // Always build a 64-bit width cache, add WidthWidget to partition ext memory into 64-bit packets
+  //new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(3, 3) ++ // Add async crossings between RocketTile and uncore
+  //new freechips.rocketchip.subsystem.WithNBigCores(4, location=InCluster(0)) ++
+  //new freechips.rocketchip.subsystem.WithCluster(0) ++
+
+  //==================================
+  // UCIe Digital 0
+  //==================================
+  // new edu.berkeley.cs.ucie.digital.tilelink.WithUCITLAdapter(edu.berkeley.cs.ucie.digital.tilelink.UCITLParams(
+  //   protoParams = edu.berkeley.cs.ucie.digital.protocol.ProtocolLayerParams(),
+  //   tlParams    = edu.berkeley.cs.ucie.digital.tilelink.TileLinkParams( address = 0x0000,
+  //                                                                       addressRange = ((2L << 32)-1),
+  //                                                                       configAddress = 0x5000,
+  //                                                                       inwardQueueDepth = 2,
+  //                                                                       outwardQueueDepth = 2,
+  //                                                                       dataWidth_arg = 256),
+  //   fdiParams   = edu.berkeley.cs.ucie.digital.interfaces.FdiParams(width = 64, dllpWidth = 64, sbWidth = 32),
+  //   rdiParams   = edu.berkeley.cs.ucie.digital.interfaces.RdiParams(width = 64, sbWidth = 32),
+  //   sbParams    = edu.berkeley.cs.ucie.digital.sideband.SidebandParams(),
+  //   //myId        = 1,
+  //   linkTrainingParams = edu.berkeley.cs.ucie.digital.logphy.LinkTrainingParams(),
+  //   afeParams   = edu.berkeley.cs.ucie.digital.interfaces.AfeParams(),
+  //   laneAsyncQueueParams = AsyncQueueParams()
+  // )) ++
+  // new chipyard.harness.WithUcieDigitalTiedOff ++
+
+
+  // //==================================
+  // // UCIe Digital 1
+  // //==================================
+  // new edu.berkeley.cs.ucie.digital.tilelink.WithUCITLAdapter(edu.berkeley.cs.ucie.digital.tilelink.UCITLParams(
+  //   protoParams = edu.berkeley.cs.ucie.digital.protocol.ProtocolLayerParams(),
+  //   tlParams    = edu.berkeley.cs.ucie.digital.tilelink.TileLinkParams( address = 0x100000000L,
+  //                                                                       addressRange = ((2L << 32)-1),
+  //                                                                       configAddress = 0x100005000L,
+  //                                                                       inwardQueueDepth = 2,
+  //                                                                       outwardQueueDepth = 2,
+  //                                                                       dataWidth_arg = 256),
+  //   fdiParams   = edu.berkeley.cs.ucie.digital.interfaces.FdiParams(width = 64, dllpWidth = 64, sbWidth = 32),
+  //   rdiParams   = edu.berkeley.cs.ucie.digital.interfaces.RdiParams(width = 64, sbWidth = 32),
+  //   sbParams    = edu.berkeley.cs.ucie.digital.sideband.SidebandParams(),
+  //   //myId        = 1,
+  //   linkTrainingParams = edu.berkeley.cs.ucie.digital.logphy.LinkTrainingParams(),
+  //   afeParams   = edu.berkeley.cs.ucie.digital.interfaces.AfeParams(),
+  //   laneAsyncQueueParams = AsyncQueueParams()
+  // )) ++
+  // new chipyard.harness.WithUcieDigitalTiedOff ++
+
+  //==================================
+  // Set up tiles
+  //==================================
+  // new chipyard.config.WithNPMPs(0) ++ 										// Eliminate potentially critical path
+  // Gemmini with RoCC interfaces
+  // new chipyard.config.WithMultiRoCC ++
+  // new chipyard.config.WithMultiRoCCFromBuildRoCC(0, 1, 2, 3, 4) ++
+  // new rerocc.WithReRoCC(rerocc.client.ReRoCCClientParams(nCfgs=16), rerocc.manager.ReRoCCTileParams(l2TLBEntries=512, l2TLBWays=1, dcacheParams=Some(DCacheParams(nWays=1, nSets=64)))) ++
+
+
+  //==================================
+  // Shuttle Tile + Saturn Cores
+  //==================================
+  // new shuttle.common.WithAsynchronousShuttleTiles(3, 3, location=InCluster(0)) ++ // Add async crossings between RocketTile and uncore
+  new saturn.shuttle.WithShuttleVectorUnit(512, 256, VectorParams.genParams) ++
+  new shuttle.common.WithShuttleTileBeatBytes(16) ++
+  new shuttle.common.WithTCM(size=256L << 10, banks=2) ++
+  new shuttle.common.WithShuttleTileBoundaryBuffers() ++
+  // ICache
+  new shuttle.common.WithL1ICacheWays(2) ++
+  new shuttle.common.WithL1ICacheSets(64) ++
+  // DCache
+  new shuttle.common.WithL1DCacheWays(2) ++
+  // new shuttle.common.WithL1DCacheSets(256) ++
+  new shuttle.common.WithL1DCacheBanks(1) ++
+  new shuttle.common.WithL1DCacheTagBanks(1) ++
+  new shuttle.common.WithShuttleTileBeatBytes(16) ++
+  new shuttle.common.WithNShuttleCores(2) ++
+
+  //==================================
+  // Set up I/O
+  //==================================
+  // new WithIntel4x4ChipTop(sim=sim) ++
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++                  // 4GB max external memory
+  new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
+
+  new testchipip.ctc.WithCTC(new testchipip.ctc.CTCParams(
+    onchipAddr = 0x1000000000L,
+    offchipAddr = 0x0L,
+    size = ((1L << 32) - 1),
+    noPhy = true,
+    managerBus = Some(PBUS)
+  )) ++ 
+  new chipyard.iobinders.WithCTCPunchthrough ++ // Adding here to not destroy the abstract config, this should be IOCells tho
+
+  // new testchipip.serdes.WithSerialTL
+  //   (
+  //   Seq(
+  //   // testchipip.serdes.SerialTLParams(              // 1 serial tilelink port
+  //   //   manager = Some(testchipip.serdes.SerialTLManagerParams(                             // port acts as amanager of offchip memory
+  //   //   	memParams = Seq(testchipip.serdes.ManagerRAMParams(                               // 4 GB of off-c`hip   memory
+  //   //       address = BigInt("80000000", 16),
+  //   //       size    = BigInt("100000000", 16)
+  //   //     )),
+  //   //     isMemoryDevice = true,
+  //   //     slaveWhere = MBUS
+  //   //   )),
+  //   //   client = Some(testchipip.serdes.SerialTLClientParams()),                            // Allow an external manager to probe this chip
+  //   //   phyParams = testchipip.serdes.DecoupledExternalSyncSerialPhyParams(phitWidth=1, flitWidth=16)              // 4-bit bidir interface, sync'd to an external clock
+  //   // ),
+  //   testchipip.serdes.SerialTLParams(                               // 1st serial-tl is chip-to-chip
+  //     client = Some(testchipip.serdes.SerialTLClientParams()),      // chip-to-chip serial-tl acts as a client
+  //     manager = Some(testchipip.serdes.SerialTLManagerParams(       // chip-to-chip serial-tl managers other chip's memor
+  //       memParams = Seq(testchipip.serdes.ManagerRAMParams(
+  //         address = 0,  // base of chip 2's addr space wrt chip 2
+  //         size = 2L << 32,
+  //       )),
+  //       slaveWhere = OBUS,
+  //       cacheIdBits = 4
+  //     )),
+  //     phyParams = testchipip.serdes.CreditedSourceSyncSerialPhyParams(phitWidth=4, flitWidth=16)     // chip-to-chip serial-tl is symmetric source-sync'd
+  //   ))
+  // ) ++
+  // new testchipip.soc.WithOffchipBusClient(SBUS,                     // obus provides path to other chip's memory
+  //   blockRange = Seq(AddressSet(0, (2L << 32) - 1)),                // The lower 8GB is mapped to this chip
+  //   replicationBase = Some(2L << 32)                                // The upper 8GB goes off-chip
+  // ) ++
+
+  // new testchipip.soc.WithOffchipBus ++
+  // TODO: REMOVE
+  // new freechips.rocketchip.subsystem.WithNoMemPort ++                                   // Remove axi4 mem port
+  // new testchipip.soc.WithOffchipBusClient(MBUS) ++                                          // offchip bus connects to
+  // new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
+
+
+  //==================================
+  // Set up memory
+  //==================================
+  //new chipyard.config.WithBroadcastManager ++
+  new chipyard.config.WithInclusiveCacheInteriorBuffer ++
+  new chipyard.config.WithInclusiveCacheExteriorBuffer ++
+  new freechips.rocketchip.subsystem.WithInclusiveCache(nWays=4, capacityKB=512, outerLatencyCycles=4) ++
+  new freechips.rocketchip.subsystem.WithNBanks(4) ++
+  new testchipip.soc.WithNoScratchpadMonitors ++
+  new testchipip.soc.WithScratchpad(base=0x580000000L,
+                                    size=(1L << 17), // 128KB
+                                    banks=2,
+                                    partitions=1,
+                                    buffer=BufferParams.default,
+                                    outerBuffer=BufferParams.default) ++
+
+  //==================================
+  // Set up clock./reset
+  //==================================
+  // Create the uncore clock group
+  // new chipyard.clocking.WithClockGroupsCombinedByName(
+  //   ("uncore", Seq("implicit", "sbus", "mbus", "cbus",
+  //                  "system_bus", "fbus", "pbus"), Nil)) ++
+  new chipyard.config.AbstractConfig
+)
 
 class MultiSimSertlKodiakConfig extends Config(
   new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++

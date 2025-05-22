@@ -14,12 +14,15 @@ import freechips.rocketchip.subsystem._
 import freechips.rocketchip.devices.tilelink.{BootROMLocated}
 import freechips.rocketchip.devices.debug.{DebugModuleKey}
 import freechips.rocketchip.prci.{AsynchronousCrossing}
+import freechips.rocketchip.diplomacy.{AddressSet}
 import testchipip.cosim.{TracePortKey}
 import icenet._
 
 import chipyard.clocking.{ChipyardPRCIControlKey}
 import chipyard.harness.{HarnessClockInstantiatorKey, WithAbsoluteFreqHarnessClockInstantiator, WithMultiChipSerialTL, WithMultiChip}
 import org.chipsalliance.cde.config.Parameters
+
+import testchipip.soc.{OBUS}
 
 // Disables clock-gating; doesn't play nice with our FAME-1 pass
 class WithoutClockGating extends Config((site, here, up) => {
@@ -246,6 +249,39 @@ class FireSimDualKodiakConfig extends Config(
   new WithDefaultFireSimBridges ++
   new WithFireSim500ConfigTweaks ++
   new chipyard.MultiSimSertlKodiakConfig)
+
+class FireSimCTCKodiakConfig extends Config(
+  new WithCTCBridge ++
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 16L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSim500ConfigTweaks ++
+  new chipyard.KodiakFireSimCTCConfig 
+)
+
+class CTCFireSimConfig extends Config(
+  new WithCTCBridge ++      
+  // new chipyard.harness.WithCTCLoopback ++
+  new testchipip.ctc.WithCTC(new testchipip.ctc.CTCParams(
+    onchipAddr = 0x1000000000L,
+    offchipAddr = 0x0L,
+    size = ((1L << 32) - 1),
+    noPhy = true
+  )) ++ 
+  // new testchipip.soc.WithOffchipBusClient(SBUS,
+  //   blockRange = Seq(AddressSet(0, (1L << 32) - 1)),                                               
+  //   replicationBase = Some(1L << 32)
+  // ) ++                   
+  // new testchipip.soc.WithOffchipBus ++
+  new chipyard.iobinders.WithCTCPunchthrough ++ // Adding here to not destroy the abstract config, this should be IOCells tho
+  new FireSimRocketConfig
+)
+
+// Trusting that harness clocks will work here
+class MultiChipCTCFireSimConfig extends Config(
+  new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++
+  new chipyard.harness.WithMultiChip(0, new CTCFireSimConfig) ++                                      
+  new chipyard.harness.WithMultiChip(1, new CTCFireSimConfig)
+)
 
 // class FireSimDualKodiakConfig extends Config(
 //   new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++
