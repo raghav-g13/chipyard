@@ -18,7 +18,8 @@ import testchipip.cosim.{TracePortKey}
 import icenet._
 
 import chipyard.clocking.{ChipyardPRCIControlKey}
-import chipyard.harness.{HarnessClockInstantiatorKey}
+import chipyard.harness.{HarnessClockInstantiatorKey, WithAbsoluteFreqHarnessClockInstantiator, WithMultiChipSerialTL, WithMultiChip}
+import org.chipsalliance.cde.config.Parameters
 
 // Disables clock-gating; doesn't play nice with our FAME-1 pass
 class WithoutClockGating extends Config((site, here, up) => {
@@ -235,11 +236,39 @@ class FireSimQuadRocketConfig extends Config(
   new chipyard.QuadRocketConfig)
 
 class FireSimKodiakConfig extends Config(
-  // We don't have any memory channels on the SoC, memory reuqests are served over TSI by a "host"
-  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 16L) ++
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
   new WithDefaultFireSimBridges ++
   new WithFireSim500ConfigTweaks ++
   new chipyard.KodiakFireSimConfig)
+
+class FireSimDualKodiakConfig extends Config(
+  // new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSim500ConfigTweaks ++
+  new chipyard.MultiSimSertlKodiakConfig)
+
+// class FireSimDualKodiakConfig extends Config(
+//   new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++
+//   new chipyard.harness.WithMultiChipSerialTL(chip0 = 0, chip1 = 1, chip0portId = 1, chip1portId = 1) ++ {
+//     val chip0Params = Parameters.empty ++ new KodiakFireSimBaseConfig()
+//     val chip1Params = Parameters.empty ++ new KodiakFireSimBaseConfig()
+//     new chipyard.harness.WithMultiChip(1, chip1Params) ++
+//     new chipyard.harness.WithMultiChip(0, chip0Params)
+//   }
+// )
+
+// class FireSimDualKodiakConfig extends Config(
+//   new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++
+//   new chipyard.harness.WithMultiChipSerialTL(chip0=0, chip1=1, chip0portId=0, chip1portId=0) ++
+//   new chipyard.harness.WithMultiChip(1, new KodiakFireSimBaseConfig) ++ 
+//   new chipyard.harness.WithMultiChip(0, new KodiakFireSimBaseConfig) 
+// )
+
+// class KodiakFireSimBaseConfig extends Config(
+//   new WithDefaultFireSimBridges ++
+//   new WithFireSim500ConfigTweaks ++
+//   new chipyard.KodiakFireSimConfig
+// )
 
 // DOC include end: firesimconfig
 // A stripped down configuration that should fit on all supported hosts.

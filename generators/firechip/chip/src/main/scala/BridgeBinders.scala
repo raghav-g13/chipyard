@@ -72,12 +72,12 @@ class WithTSIBridgeAndHarnessRAMOverSerialTL extends HarnessBinder({
         val mainMemoryName = Option.when(hasMainMemory)(MainMemoryConsts.globalName(chipId))
         TSIBridge(th.harnessBinderClock, ram.io.tsi.get, mainMemoryName, th.harnessBinderReset.asBool)(th.p)
       }
-      case io: CreditedSourceSyncPhitIO => {
-        io.clock_in := false.B.asClock
-        io.reset_in := false.B.asAsyncReset
-        io.in.valid := false.B
-        io.in.bits := DontCare 
-      }
+      // case io: CreditedSourceSyncPhitIO => {
+      //   io.clock_in := false.B.asClock
+      //   io.reset_in := false.B.asAsyncReset
+      //   io.in.valid := false.B
+      //   io.in.bits := DontCare 
+      // }
     }
   }
 })

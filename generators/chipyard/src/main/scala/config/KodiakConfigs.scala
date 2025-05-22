@@ -24,7 +24,7 @@ import saturn.common.{VectorParams}
 import freechips.rocketchip.util.{AsyncQueueParams}
 import freechips.rocketchip.subsystem.WithoutTLMonitors
 
-class KodiakFireSimBaseConfig extends Config (
+class KodiakFireSimOldConfig extends Config (
   //==================================
   // Set up buses
   //==================================
@@ -182,7 +182,7 @@ class KodiakFireSimBaseConfig extends Config (
   new testchipip.soc.WithOffchipBus ++
   // TODO: REMOVE
   new freechips.rocketchip.subsystem.WithNoMemPort ++                                   // Remove axi4 mem port
-  //new testchipip.soc.WithOffchipBusClient(MBUS) ++                                          // offchip bus connects to
+  // new testchipip.soc.WithOffchipBusClient(MBUS) ++                                          // offchip bus connects to
   //new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
 
 
@@ -314,7 +314,15 @@ class KodiakFireSimConfig extends Config (
   new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++ // use absolute frequencies for simulations in the harness
                                                                    // NOTE: This only simulates properly in VCS
   new testchipip.soc.WithChipIdPin ++                               // Add pin to identify chips
-  new chipyard.harness.WithSerialTLTiedOff(tieoffs=Some(Seq(1))) ++ // Tie-off the chip-to-chip link in single-chip sims
+  
+  // Success error, tie-off doesn't work
+  // new chipyard.harness.WithTiedOffJTAG ++
+  // new chipyard.harness.WithTiedOffDMI ++
+
+  // Success error, let's try WithNoDebug
+  new chipyard.config.WithNoDebug ++
+
+  // new chipyard.harness.WithSerialTLTiedOff(tieoffs=Some(Seq(1))) ++ // Tie-off the chip-to-chip link in single-chip sims
   new chipyard.harness.WithDriveChipIdPin ++
   // new chipyard.harness.WithOffchipBusSelPlusArg ++
 
@@ -421,27 +429,29 @@ class KodiakFireSimConfig extends Config (
   // Set up I/O
   //==================================
   // new WithIntel4x4ChipTop(sim=sim) ++
-  //new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++                  // 4GB max external memory
-  // new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++                  // 4GB max external memory
+  new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
 
   new testchipip.serdes.WithSerialTL
-    (Seq(testchipip.serdes.SerialTLParams(              // 1 serial tilelink port
-      manager = Some(testchipip.serdes.SerialTLManagerParams(                             // port acts as amanager of offchip memory
-      	memParams = Seq(testchipip.serdes.ManagerRAMParams(                               // 4 GB of off-c`hip   memory
-          address = BigInt("80000000", 16),
-          size    = BigInt("100000000", 16)
-        )),
-        isMemoryDevice = true,
-        slaveWhere = MBUS
-      )),
-      client = Some(testchipip.serdes.SerialTLClientParams()),                            // Allow an external manager to probe this chip
-      phyParams = testchipip.serdes.DecoupledExternalSyncSerialPhyParams(phitWidth=1, flitWidth=16)              // 4-bit bidir interface, sync'd to an external clock
-    ),
+    (
+    Seq(
+    // testchipip.serdes.SerialTLParams(              // 1 serial tilelink port
+    //   manager = Some(testchipip.serdes.SerialTLManagerParams(                             // port acts as amanager of offchip memory
+    //   	memParams = Seq(testchipip.serdes.ManagerRAMParams(                               // 4 GB of off-c`hip   memory
+    //       address = BigInt("80000000", 16),
+    //       size    = BigInt("100000000", 16)
+    //     )),
+    //     isMemoryDevice = true,
+    //     slaveWhere = MBUS
+    //   )),
+    //   client = Some(testchipip.serdes.SerialTLClientParams()),                            // Allow an external manager to probe this chip
+    //   phyParams = testchipip.serdes.DecoupledExternalSyncSerialPhyParams(phitWidth=1, flitWidth=16)              // 4-bit bidir interface, sync'd to an external clock
+    // ),
     testchipip.serdes.SerialTLParams(                               // 1st serial-tl is chip-to-chip
       client = Some(testchipip.serdes.SerialTLClientParams()),      // chip-to-chip serial-tl acts as a client
       manager = Some(testchipip.serdes.SerialTLManagerParams(       // chip-to-chip serial-tl managers other chip's memor
         memParams = Seq(testchipip.serdes.ManagerRAMParams(
-          address = 0,
+          address = 0,  // base of chip 2's addr space wrt chip 2
           size = 2L << 32,
         )),
         slaveWhere = OBUS,
@@ -457,8 +467,8 @@ class KodiakFireSimConfig extends Config (
 
   new testchipip.soc.WithOffchipBus ++
   // TODO: REMOVE
-  new freechips.rocketchip.subsystem.WithNoMemPort ++                                   // Remove axi4 mem port
-  //new testchipip.soc.WithOffchipBusClient(MBUS) ++                                          // offchip bus connects to
+  // new freechips.rocketchip.subsystem.WithNoMemPort ++                                   // Remove axi4 mem port
+  // new testchipip.soc.WithOffchipBusClient(MBUS) ++                                          // offchip bus connects to
   // new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
 
 
@@ -488,11 +498,12 @@ class KodiakFireSimConfig extends Config (
   new chipyard.config.AbstractConfig
 )
 
+
 class MultiSimSertlKodiakConfig extends Config(
   new chipyard.harness.WithAbsoluteFreqHarnessClockInstantiator ++
-  new chipyard.harness.WithMultiChipSerialTL(chip0=0, chip1=1, chip0portId=1, chip1portId=1) ++
-  new chipyard.harness.WithMultiChip(0, new KodiakFireSimBaseConfig) ++
-  new chipyard.harness.WithMultiChip(1, new KodiakFireSimBaseConfig)
+  new chipyard.harness.WithMultiChipSerialTL(chip0=0, chip1=1, chip0portId=0, chip1portId=0) ++
+  new chipyard.harness.WithMultiChip(0, new KodiakFireSimConfig) ++
+  new chipyard.harness.WithMultiChip(1, new KodiakFireSimConfig)
 )
 
 
