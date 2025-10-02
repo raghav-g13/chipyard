@@ -613,10 +613,10 @@ class KodiakFireSimCTCConfig extends Config (
   new shuttle.common.WithShuttleTileBeatBytes(16) ++
   new shuttle.common.WithTCM(size=256L << 10, banks=2) ++
   new shuttle.common.WithShuttleTileBoundaryBuffers() ++
-  // ICache
+  // ICache (64 * 2 * blockBytes = 64)
   new shuttle.common.WithL1ICacheWays(2) ++
   new shuttle.common.WithL1ICacheSets(64) ++
-  // DCache
+  // DCache (sets = 64 * 2 * blockBytes = 64)
   new shuttle.common.WithL1DCacheWays(2) ++
   // new shuttle.common.WithL1DCacheSets(256) ++
   new shuttle.common.WithL1DCacheBanks(1) ++
