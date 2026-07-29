@@ -221,6 +221,11 @@ class FireSimQuadRocketConfig extends Config(
   new WithFireSimConfigTweaks ++
   new chipyard.QuadRocketConfig)
 
+// Sized for the XB-10's 8 GB physical DDR4.
+class FireSimRocket8GiBDRAMConfig extends Config(
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 8L) ++
+  new FireSimRocketConfig)
+
 // A stripped down configuration that should fit on all supported hosts.
 // Flat to avoid having to reorganize the config class hierarchy to remove certain features
 class FireSimSmallSystemConfig extends Config(
