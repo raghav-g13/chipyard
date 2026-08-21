@@ -113,6 +113,16 @@ class WithFireSimHighPerfClocking extends Config(
   new chipyard.config.WithAsynchrousMemoryBusCrossing
 )
 
+class WithFireSim500ConfigTweaks extends Config(
+  new chipyard.config.WithSystemBusFrequency(500.0) ++
+  new chipyard.config.WithControlBusFrequency(500.0) ++
+  new chipyard.config.WithPeripheryBusFrequency(500.0) ++
+  new chipyard.config.WithControlBusFrequency(500.0) ++
+  new chipyard.config.WithMemoryBusFrequency(500.0) ++
+  new chipyard.config.WithFrontBusFrequency(500.0) ++
+  new WithFireSimDesignTweaks
+)
+
 // Tweaks that are generally applied to all firesim configs setting a single clock domain at 1000 MHz
 class WithFireSimConfigTweaks extends Config(
   // 1 GHz matches the FASED default (DRAM modeli realistically configured for that frequency)
@@ -220,6 +230,12 @@ class FireSimQuadRocketConfig extends Config(
   new WithDefaultFireSimBridges ++
   new WithFireSimConfigTweaks ++
   new chipyard.QuadRocketConfig)
+
+class FireSimKodiakConfig extends Config(
+  new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
+  new WithDefaultFireSimBridges ++
+  new WithFireSim500ConfigTweaks ++
+  new chipyard.KodiakFireSimConfig)
 
 // Sized for the XB-10's 8 GB physical DDR4.
 class FireSimRocket8GiBDRAMConfig extends Config(
