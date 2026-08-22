@@ -6,7 +6,6 @@ import org.chipsalliance.cde.config.{Config, Parameters}
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.subsystem._
-import testchipip.soc.{OBUS}
 import chipyard.harness.BuildTop
 import chipyard.iobinders._
 import sifive.blocks.devices.uart._
@@ -46,7 +45,6 @@ class KodiakFireSimConfig extends Config (
   // Success error, let's try WithNoDebug
   new chipyard.config.WithNoDebug ++
 
-  // new chipyard.harness.WithSerialTLTiedOff(tieoffs=Some(Seq(1))) ++ // Tie-off the chip-to-chip link in single-chip sims
   new chipyard.harness.WithDriveChipIdPin ++
   // new chipyard.harness.WithOffchipBusSelPlusArg ++
 
@@ -95,28 +93,12 @@ class KodiakFireSimConfig extends Config (
   new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++                  // 4GB max external memory
   new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
 
-  new testchipip.serdes.WithSerialTL
-    (
-    Seq(
-    testchipip.serdes.SerialTLParams(                               // 1st serial-tl is chip-to-chip
-      client = Some(testchipip.serdes.SerialTLClientParams()),      // chip-to-chip serial-tl acts as a client
-      manager = Some(testchipip.serdes.SerialTLManagerParams(       // chip-to-chip serial-tl managers other chip's memor
-        memParams = Seq(testchipip.serdes.ManagerRAMParams(
-          address = 0,  // base of chip 2's addr space wrt chip 2
-          size = 2L << 32,
-        )),
-        slaveWhere = OBUS,
-        cacheIdBits = 4
-      )),
-      phyParams = testchipip.serdes.CreditedSourceSyncSerialPhyParams(phitWidth=4, flitWidth=16)     // chip-to-chip serial-tl is symmetric source-sync'd
-    ))
-  ) ++
-  new testchipip.soc.WithOffchipBusClient(SBUS,                     // obus provides path to other chip's memory
-    blockRange = Seq(AddressSet(0, (2L << 32) - 1)),                // The lower 8GB is mapped to this chip
-    replicationBase = Some(2L << 32)                                // The upper 8GB goes off-chip
-  ) ++
-
-  new testchipip.soc.WithOffchipBus ++
+  new testchipip.serdes.WithSerialTL(Seq(
+    testchipip.serdes.SerialTLParams(
+      client = Some(testchipip.serdes.SerialTLClientParams()),
+      phyParams = testchipip.serdes.DecoupledExternalSyncSerialPhyParams(phitWidth=32, flitWidth=32)
+    )
+  )) ++
 
   //==================================
   // Set up memory

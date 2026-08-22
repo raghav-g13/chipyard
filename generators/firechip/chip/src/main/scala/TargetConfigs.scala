@@ -233,7 +233,13 @@ class FireSimQuadRocketConfig extends Config(
 
 class FireSimKodiakConfig extends Config(
   new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 4L) ++
-  new WithDefaultFireSimBridges ++
+  new WithTSIBridgeAndHarnessRAMOverSerialTL ++
+  new WithUARTBridge ++
+  new WithBlockDeviceBridge ++
+  new WithFASEDBridge ++
+  new WithFireSimMultiCycleRegfile ++
+  new WithFireSimFAME5 ++
+  new WithFireSimIOCellModels ++
   new WithFireSim500ConfigTweaks ++
   new chipyard.KodiakFireSimConfig)
 

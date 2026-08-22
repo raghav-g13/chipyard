@@ -51,7 +51,8 @@ CVA6_VERILATOR_FLAGS = \
 
 # normal flags used for midas builds (that are incompatible with cva6)
 DEFAULT_MIDAS_VERILATOR_FLAGS = \
-	--assert
+	--assert \
+	-Wno-UNSIGNED
 
 # AJG: this must be evaluated after verilog generation to work (hence the =)
 EXTRA_VERILATOR_FLAGS = \
