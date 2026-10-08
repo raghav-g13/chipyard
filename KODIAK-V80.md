@@ -1,8 +1,8 @@
 # Running Kodiak on the Alveo V80 with FireSim
 
 This guide gets you from a fresh machine to running the Kodiak test workloads
-on a Xilinx Alveo V80 FPGA. Anything the upstream FireSim V80 guide already
-covers is linked, not repeated. Only the Kodiak-specific steps are spelled out.
+on a Xilinx Alveo V80 FPGA. Steps the upstream FireSim V80 guide already
+covers are linked.
 
 Upstream V80 guide, referred to below as **[V80 guide]**:
 https://docs.fires.im/en/main/Getting-Started-Guides/On-Premises-FPGA-Getting-Started/Xilinx-Alveo-V80-FPGAs.html
@@ -43,6 +43,25 @@ git checkout v80-kodiak-handoff
 `-s 9` skips precompiling the default buildroot Linux, which the bare-metal
 Kodiak workloads don't need. Don't skip step 10 (CIRCT): `firesim infrasetup`
 builds the simulation driver locally, and that needs `firtool`.
+
+**Reinstall the FireSim sudo scripts**, even if this machine already has them.
+They changed for V80 support, so copies from an older FireSim install won't
+work. Follow step 1 of the `sudo` setup in
+[FireSim's local FPGA setup](https://docs.fires.im/en/main/Local-FPGA-Initial-Setup.html),
+but copy the scripts from this branch's FireSim instead of a temporary clone:
+
+```bash
+cd sims/firesim
+sudo cp deploy/sudo-scripts/* /usr/local/bin
+sudo cp platforms/xilinx_alveo_u250/scripts/* /usr/local/bin
+sudo cp platforms/xilinx_alveo_v80/scripts/firesim-v80-change-pcie-perms /usr/local/bin
+sudo chmod 755 /usr/local/bin/firesim*
+sudo chgrp firesim /usr/local/bin/firesim*
+cd ../..
+```
+
+Then rerun `firesim enumeratefpgas` once the manager is configured (below), so
+`/opt/firesim-db.json` lists the V80.
 
 This branch fetches FireSim from `raghav-g13/firesim` (branch
 `v80-kodiak-handoff`), which adds the Kodiak workloads and runner script.
@@ -140,10 +159,8 @@ with `builds_to_run` in `config_build.yaml` set to
 `xilinx_alveo_v80_firesim_kodiak_no_nic_l2_llc4mb_ddr3`. The recipe uses the
 BASIC strategy and a 10 MHz FPGA clock; a build takes about 2.5 hours.
 
-Keep those settings. Kodiak bitstreams built at 50 MHz (BASIC or
-RUNTIME_OPTIMIZED) or at 10 MHz with RUNTIME_OPTIMIZED meet timing but hang or
-compute wrong vector floating-point results on the FPGA. The cause hasn't been
-found yet.
+Keep those settings. We are still debugging Kodiak bitstreams built at 50 MHz (BASIC or
+RUNTIME_OPTIMIZED) or at 10 MHz with RUNTIME_OPTIMIZED which meet timing but show erroneous behavior.
 
 ## 7. Adding workloads
 
@@ -160,7 +177,7 @@ copy any `deploy/workloads/kodiak-*.json`, changing `benchmark_name` and
   cores, and the Rocket core is hart 2. A bare-metal startup that parks every
   hart with `mhartid >= 1` runs the whole program on Shuttle 0, and the Rocket
   core never runs.
-- **A workload times out.** Larger kernels can take much longer than the 20
+- **A workload times out.** Larger kernels can take much longer than the 20 mins
   here; some have run for over 3 hours at 10 MHz. Raise the runner's timeout
   with `-t SECONDS`.
 - **infrasetup fails with "01 not visible" or "Unable to obtain Extended
@@ -170,7 +187,7 @@ copy any `deploy/workloads/kodiak-*.json`, changing `benchmark_name` and
   `[0580]`; other FireSim FPGAs in the same host can share the `10ee:903f` ID.
   To recover, reprogram the V80 over JTAG (as `firesim infrasetup` does, or
   with Vivado's hardware manager), then run
-  `echo 1 | sudo tee /sys/bus/pci/rescan`. If it still doesn't appear, reboot
+  `echo 1 | sudo tee /sys/bus/pci/rescan`. If it still doesn't appear, warm reboot
   the host. Then rerun the failed workloads by name.
 - **A simulation hangs.** Run `firesim kill` to free the FPGA. The runner
   script does this automatically after any non-PASS result.
