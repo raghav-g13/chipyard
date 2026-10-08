@@ -37,8 +37,12 @@ Chipyard:
 git clone https://github.com/raghav-g13/chipyard
 cd chipyard
 git checkout v80-kodiak-handoff
-./build-setup.sh
+./build-setup.sh -s 9
 ```
+
+`-s 9` skips precompiling the default buildroot Linux, which the bare-metal
+Kodiak workloads don't need. Don't skip step 10 (CIRCT): `firesim infrasetup`
+builds the simulation driver locally, and that needs `firtool`.
 
 This branch fetches FireSim from `raghav-g13/firesim` (branch
 `v80-kodiak-handoff`), which adds the Kodiak workloads and runner script.
@@ -49,7 +53,10 @@ FireSim manager" from the [V80 guide] unchanged.
 ## 3. Get the Kodiak bitstream
 
 `sims/firesim-staging/kodiak_config_hwdb.yaml` points at a prebuilt bitstream
-(10 MHz FPGA clock, BASIC build strategy) that passes all 20 workloads below.
+(10 MHz FPGA clock, BASIC build strategy) that passes all 20 workloads below:
+
+https://bitstreams.ucb.bar/xilinx_alveo_v80/xilinx_alveo_v80_firesim_kodiak_no_nic_l2_llc4mb_ddr3.tar.gz
+
 FireSim downloads it during `firesim infrasetup`, so there's nothing to fetch
 by hand.
 
